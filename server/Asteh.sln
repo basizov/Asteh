@@ -1,27 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4376194C-3D78-46AF-9876-9521479D57A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteh.Api", "src\Asteh.Api\Asteh.Api.csproj", "{0003F586-9920-4BD4-A45A-590F5DAA01A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asteh.Api", "src\Asteh.Api\Asteh.Api.csproj", "{0003F586-9920-4BD4-A45A-590F5DAA01A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteh.Core", "src\Asteh.Core\Asteh.Core.csproj", "{C9285D49-EF53-4D0D-99FF-81FAEAEF462F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asteh.Core", "src\Asteh.Core\Asteh.Core.csproj", "{C9285D49-EF53-4D0D-99FF-81FAEAEF462F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteh.Domain", "src\Asteh.Domain\Asteh.Domain.csproj", "{A36AE455-CFF9-4501-B65F-F2F8C5A37B9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asteh.Domain", "src\Asteh.Domain\Asteh.Domain.csproj", "{A36AE455-CFF9-4501-B65F-F2F8C5A37B9E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3DB17051-556D-4549-83DC-7FBC3CE834B1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4EBEBA08-F8E9-45CB-912B-049262603358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteh.Core.Tests", "tests\Asteh.Core.Tests\Asteh.Core.Tests.csproj", "{4DBBC634-5BC0-4948-8452-19E7D82E7A8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteh.Core.UnitTests", "tests\Asteh.Core.UnitTests\Asteh.Core.UnitTests.csproj", "{71AF36DB-A06E-4303-90BC-2813F53601E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0003F586-9920-4BD4-A45A-590F5DAA01A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -36,15 +33,21 @@ Global
 		{A36AE455-CFF9-4501-B65F-F2F8C5A37B9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A36AE455-CFF9-4501-B65F-F2F8C5A37B9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A36AE455-CFF9-4501-B65F-F2F8C5A37B9E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DBBC634-5BC0-4948-8452-19E7D82E7A8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DBBC634-5BC0-4948-8452-19E7D82E7A8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DBBC634-5BC0-4948-8452-19E7D82E7A8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DBBC634-5BC0-4948-8452-19E7D82E7A8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71AF36DB-A06E-4303-90BC-2813F53601E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71AF36DB-A06E-4303-90BC-2813F53601E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71AF36DB-A06E-4303-90BC-2813F53601E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71AF36DB-A06E-4303-90BC-2813F53601E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0003F586-9920-4BD4-A45A-590F5DAA01A5} = {4376194C-3D78-46AF-9876-9521479D57A6}
 		{C9285D49-EF53-4D0D-99FF-81FAEAEF462F} = {4376194C-3D78-46AF-9876-9521479D57A6}
 		{A36AE455-CFF9-4501-B65F-F2F8C5A37B9E} = {4376194C-3D78-46AF-9876-9521479D57A6}
-		{4DBBC634-5BC0-4948-8452-19E7D82E7A8E} = {3DB17051-556D-4549-83DC-7FBC3CE834B1}
+		{71AF36DB-A06E-4303-90BC-2813F53601E0} = {4EBEBA08-F8E9-45CB-912B-049262603358}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52D9B300-6B90-40F0-BB1A-4D45C8CA0509}
 	EndGlobalSection
 EndGlobal

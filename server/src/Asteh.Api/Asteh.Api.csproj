@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Asteh.Core\Asteh.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

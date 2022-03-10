@@ -16,7 +16,7 @@ namespace Asteh.Domain.Repositories.Base
 			_applicationDbContext = applicationDbContext;
 		}
 
-		public async Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken)
+		public async Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken = default)
 		{
 			return await _entities
 				.AsNoTracking()
@@ -25,7 +25,7 @@ namespace Asteh.Domain.Repositories.Base
 
 		public async Task<IReadOnlyCollection<T>> FindByAsync
 			(Expression<Func<T, bool>> expression,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken = default)
 		{
 			return await _entities
 				.Where(expression)

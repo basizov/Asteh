@@ -20,6 +20,10 @@ namespace Asteh.Domain.Configuration
 					lvd => lvd.ToString("dd.MM.yyyy"),
 					lvdstr => DateTime.Parse(lvdstr))
 				.HasMaxLength(10);
+			builder.HasIndex(u => u.Login)
+				.IsUnique()
+				.HasFilter(@"""Login"" IS NOT NULL")
+				.HasDatabaseName("UserLoginIndex");
 		}
 	}
 }

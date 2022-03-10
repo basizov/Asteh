@@ -13,8 +13,11 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return services
 				.AddSingleton(dataSettings)
-				.AddDbContext<IApplicationContext, ApplicationDbContext>(
-					opt => opt.UseSqlite(dataSettings.DbConnectionString))
+				.AddDbContext<IApplicationContext, ApplicationDbContext>(opt =>
+				{
+					opt.UseSqlite(dataSettings.DbConnectionString)
+						.UseSnakeCaseNamingConvention();
+				})
 				.AddTransient<IUnitOfWork, UnitOfWork>();
 		}
 	}
