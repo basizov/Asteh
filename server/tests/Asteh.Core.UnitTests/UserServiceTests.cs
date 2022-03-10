@@ -6,9 +6,7 @@ using AutoFixture;
 using FluentAssertions;
 using NSubstitute;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -81,6 +79,55 @@ namespace Asteh.Core.UnitTests
 
 			// Assert
 			usersTypes.Should().BeEquivalentTo(usersTypesResult);
+		}
+
+		[Fact]
+		public async Task GivenFilter_WhenFindUsersAsyncIsCalled_ThenReturnFilteredUsers()
+		{
+			// Arrange
+			const int COUNT = 10;
+			var filter = new Fixture()
+				.Build<FilterUserModel>()
+				.With(u => u.TypeName, "")
+				.With(u => u.BeginDate, "")
+				.With(u => u.EndDate, "")
+				.Create();
+			var filteredUsersResult = new Fixture()
+				.CreateMany<UserEntity>(COUNT)
+				.ToList();
+
+			_unitOfWork.UserRepository
+				.FindByAsync(u =>
+					u.Type != null &&
+					u.Type.Equals(filter.TypeName) &&
+					u.Name.Equals(filter.Name) &&
+					u.Name.Equals(filter.Name) &&
+					u.Name.Equals(filter.Name))
+				.Returns(filteredUsersResult);
+			// Act
+			var filteredUsers = await _sut.FindUsersAsync(filter);
+
+			// Assert
+			filteredUsers.Should().BeEquivalentTo(filteredUsersResult);
+		}
+
+		[Fact]
+		public async Task GivenNullFilter_WhenFindUsersAsyncIsCalled_ThenReturnFullUsers()
+		{
+			// Arrange
+			const int COUNT = 10;
+			var filteredUsersResult = new Fixture()
+				.CreateMany<UserEntity>(COUNT)
+				.ToList();
+
+			_unitOfWork.UserRepository
+				.FindByAsync(null!)
+				.Returns(filteredUsersResult);
+			// Act
+			var filteredUsers = await _sut.FindUsersAsync(null!);
+
+			// Assert
+			filteredUsers.Should().BeEquivalentTo(filteredUsersResult);
 		}
 	}
 }
