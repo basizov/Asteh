@@ -263,13 +263,188 @@ namespace Asteh.Core.UnitTests
 				.WithMessage($"UserType with name: {newUser.TypeName} doesn't exists");
 		}
 
+		[Fact]
+		public async Task GivenValidData_WhenCreateUserAsyncIsCalled_ThenWithoutReturning()
+		{
+			// Arrange
+			var newUser = new Fixture()
+				.Create<UserCreateModel>();
+			var userTypeEntity = new Fixture()
+				.Create<UserTypeEntity>();
+
+			_unitOfWork.UserRepository
+				.AnyAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(false);
+			_unitOfWork.UserTypeRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserTypeEntity, bool>>>())
+				.Returns(Task.FromResult<UserTypeEntity?>(userTypeEntity));
+			// Act
+			var filteredUsers = async () =>await _sut.CreateUserAsync(newUser);
+
+			// Assert
+			await filteredUsers.Should().NotThrowAsync();
+		}
+
 		#endregion
 
 		#region UpdateUserAsync Tests
 
+		[Theory]
+		[InlineData(2)]
+		[InlineData(12)]
+		[InlineData(1)]
+		[InlineData(34)]
+		public async Task GivenInvalidId_WhenUpdateUserAsyncIsCalled_ThenThrowArgumentException(int id)
+		{
+			// Arrange
+			var updatedUser = new Fixture()
+				.Create<UserUpdateModel>();
+
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(null));
+			// Act
+			var filteredUsers = async () => await _sut.UpdateUserAsync(id, updatedUser);
+
+			// Assert
+			await filteredUsers.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"User with id: {id} doesn't exists");
+		}
+
+		[Theory]
+		[InlineData(6)]
+		[InlineData(31)]
+		[InlineData(76)]
+		[InlineData(22)]
+		public async Task GivenInvalidTypeName_WhenUpdateUserAsyncIsCalled_ThenThrowArgumentException(int id)
+		{
+			// Arrange
+			var userEntity = new Fixture()
+				.Create<UserEntity>();
+			var updatedUser = new Fixture()
+				.Create<UserUpdateModel>();
+
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(userEntity));
+			_unitOfWork.UserTypeRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserTypeEntity, bool>>>())
+				.Returns(Task.FromResult<UserTypeEntity?>(null));
+			// Act
+			var filteredUsers = async () => await _sut.UpdateUserAsync(id, updatedUser);
+
+			// Assert
+			await filteredUsers.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"UserType with name: {updatedUser.TypeName} doesn't exists");
+		}
+
+		[Theory]
+		[InlineData(4)]
+		[InlineData(141)]
+		[InlineData(7347)]
+		[InlineData(122)]
+		public async Task GivenInvalidDateTime_WhenUpdateUserAsyncIsCalled_ThenThrowArgumentException(int id)
+		{
+			// Arrange
+			var userEntity = new Fixture()
+				.Create<UserEntity>();
+			var userTypeEntity = new Fixture()
+				.Create<UserTypeEntity>();
+			var updatedUser = new Fixture()
+				.Create<UserUpdateModel>();
+
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(userEntity));
+			_unitOfWork.UserTypeRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserTypeEntity, bool>>>())
+				.Returns(Task.FromResult<UserTypeEntity?>(userTypeEntity));
+			// Act
+			var filteredUsers = async () => await _sut.UpdateUserAsync(id, updatedUser);
+
+			// Assert
+			await filteredUsers.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"Invalid new lastVisitDate {updatedUser.LastVisitDate}");
+		}
+
+		[Theory]
+		[InlineData(10)]
+		[InlineData(2)]
+		[InlineData(642)]
+		[InlineData(12)]
+		public async Task GivenValidData_WhenUpdateUserAsyncIsCalled_ThenWithoutReturning(int id)
+		{
+			// Arrange
+			var lastVisitDate = DateTime.UtcNow.ToString("dd.MM.yyyy");
+			var userEntity = new Fixture()
+				.Create<UserEntity>();
+			var userTypeEntity = new Fixture()
+				.Create<UserTypeEntity>();
+			var updatedUser = new Fixture()
+				.Build<UserUpdateModel>()
+				.With(d => d.LastVisitDate, lastVisitDate)
+				.Create();
+
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(userEntity));
+			_unitOfWork.UserTypeRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserTypeEntity, bool>>>())
+				.Returns(Task.FromResult<UserTypeEntity?>(userTypeEntity));
+			// Act
+			var filteredUsers = async () => await _sut.UpdateUserAsync(id, updatedUser);
+
+			// Assert
+			await filteredUsers.Should().NotThrowAsync();
+		}
+
 		#endregion
 
 		#region DeleteUserAsync Tests
+
+		[Theory]
+		[InlineData(23)]
+		[InlineData(942)]
+		[InlineData(4)]
+		[InlineData(25)]
+		public async Task GivenInvalidId_WhenDeleteUserAsyncIsCalled_ThenThrowArgumentException(int id)
+		{
+			// Arrange
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(null));
+			// Act
+			var filteredUsers = async () => await _sut.DeleteUserAsync(id);
+
+			// Assert
+			await filteredUsers.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"User with id: {id} doesn't exists");
+		}
+
+		[Theory]
+		[InlineData(3)]
+		[InlineData(422)]
+		[InlineData(1)]
+		[InlineData(3215)]
+		public async Task GivenValidId_WhenDeleteUserAsyncIsCalled_ThenWithoutReturning(int id)
+		{
+			// Arrange
+			var userEntity = new Fixture()
+				.Create<UserEntity>();
+
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(userEntity));
+			// Act
+			var filteredUsers = async () => await _sut.DeleteUserAsync(id);
+
+			// Assert
+			await filteredUsers.Should().NotThrowAsync();
+		}
 
 		#endregion
 	}
