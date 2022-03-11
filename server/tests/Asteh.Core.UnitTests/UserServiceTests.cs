@@ -1,12 +1,16 @@
-﻿using Asteh.Core.Models;
+﻿using Asteh.Core.Helpers;
+using Asteh.Core.Models;
 using Asteh.Core.Services.Users;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 using AutoFixture;
+using AutoMapper;
 using FluentAssertions;
 using NSubstitute;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -14,13 +18,23 @@ namespace Asteh.Core.UnitTests
 {
 	public class UserServiceTests
 	{
+		private readonly IMapper _mapper;
 		private readonly IUserService _sut;
 		private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
 
 		public UserServiceTests()
 		{
-			_sut = new UserService(_unitOfWork);
+			if (_mapper == null)
+			{
+				var mappingConfig = new MapperConfiguration(
+					mc => mc.AddProfile(new MappingProfile()));
+				var mapper = mappingConfig.CreateMapper();
+				_mapper = mapper;
+			}
+			_sut = new UserService(_mapper, _unitOfWork);
 		}
+
+		#region GetUsersAsync Tests
 
 		[Theory]
 		[InlineData(10)]
@@ -39,6 +53,7 @@ namespace Asteh.Core.UnitTests
 			var users = await _sut.GetUsersAsync();
 
 			// Assert
+			var a = users.Count();
 			users.Should().HaveCount(usersCount);
 		}
 
@@ -81,6 +96,10 @@ namespace Asteh.Core.UnitTests
 			usersTypes.Should().BeEquivalentTo(usersTypesResult);
 		}
 
+		#endregion
+
+		#region FindUsersAsync Tests
+
 		[Fact]
 		public async Task GivenFilter_WhenFindUsersAsyncIsCalled_ThenReturnFilteredUsers()
 		{
@@ -88,27 +107,23 @@ namespace Asteh.Core.UnitTests
 			const int COUNT = 10;
 			var filter = new Fixture()
 				.Build<FilterUserModel>()
-				.With(u => u.TypeName, "")
-				.With(u => u.BeginDate, "")
-				.With(u => u.EndDate, "")
+				.With(d => d.BeginDate, DateTime.Now.AddYears(-1).ToString("dd.MM.yyyy"))
+				.With(d => d.EndDate, DateTime.Now.AddYears(1).ToString("dd.MM.yyyy"))
 				.Create();
 			var filteredUsersResult = new Fixture()
 				.CreateMany<UserEntity>(COUNT)
 				.ToList();
+			var filteredUsersModelsResult = _mapper
+				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.FindByAsync(u =>
-					u.Type != null &&
-					u.Type.Equals(filter.TypeName) &&
-					u.Name.Equals(filter.Name) &&
-					u.Name.Equals(filter.Name) &&
-					u.Name.Equals(filter.Name))
+				.FindByAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(filter);
 
 			// Assert
-			filteredUsers.Should().BeEquivalentTo(filteredUsersResult);
+			filteredUsers.Should().BeEquivalentTo(filteredUsersModelsResult);
 		}
 
 		[Fact]
@@ -119,15 +134,122 @@ namespace Asteh.Core.UnitTests
 			var filteredUsersResult = new Fixture()
 				.CreateMany<UserEntity>(COUNT)
 				.ToList();
+			var filteredUsersModelsResult = _mapper
+				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.FindByAsync(null!)
+				.GetAllAsync()
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(null!);
 
 			// Assert
-			filteredUsers.Should().BeEquivalentTo(filteredUsersResult);
+			filteredUsers.Should().BeEquivalentTo(filteredUsersModelsResult);
 		}
+
+		[Fact]
+		public async Task GivenEmptyFilter_WhenFindUsersAsyncIsCalled_ThenReturnFullUsers()
+		{
+			// Arrange
+			const int COUNT = 10;
+			var filter = new Fixture()
+				.Build<FilterUserModel>()
+				.With(u => u.Name, "")
+				.With(u => u.TypeName, "")
+				.With(u => u.BeginDate, "")
+				.With(u => u.EndDate, "")
+				.Create();
+			var filteredUsersResult = new Fixture()
+				.CreateMany<UserEntity>(COUNT)
+				.ToList();
+			var filteredUsersModelsResult = _mapper
+				.Map<IEnumerable<UserModel>>(filteredUsersResult);
+
+			_unitOfWork.UserRepository
+				.GetAllAsync()
+				.Returns(filteredUsersResult);
+			// Act
+			var filteredUsers = await _sut.FindUsersAsync(filter);
+
+			// Assert
+			filteredUsers.Should().BeEquivalentTo(filteredUsersModelsResult);
+		}
+
+		[Fact]
+		public async Task GivenInValidFilter_WhenFindUsersAsyncIsCalled_ThenThrowArgumentException()
+		{
+			// Arrange
+			var filter = new Fixture()
+				.Create<FilterUserModel>();
+
+			// Act
+			var actFilteredUsers = async () => await _sut.FindUsersAsync(filter);
+
+			// Assert
+			await actFilteredUsers.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"Uncorrect range date: {filter.BeginDate} - {filter.EndDate}");
+		}
+
+		[Fact]
+		public async Task GivenEmptyDateRange_WhenFindUsersAsyncIsCalled_ThenReturnFilteredWithAnotherFilters()
+		{
+			// Arrange
+			const int COUNT = 10;
+			var filter = new Fixture()
+				.Build<FilterUserModel>()
+				.With(u => u.BeginDate, "")
+				.With(u => u.EndDate, "")
+				.Create();
+			var filteredUsersResult = new Fixture()
+				.CreateMany<UserEntity>(COUNT)
+				.ToList();
+			var filteredUsersModelsResult = _mapper
+				.Map<IEnumerable<UserModel>>(filteredUsersResult);
+
+			_unitOfWork.UserRepository
+				.FindByAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(filteredUsersResult);
+			// Act
+			var filteredUsers = await _sut.FindUsersAsync(filter);
+
+			// Assert
+			filteredUsers.Should().BeEquivalentTo(filteredUsersModelsResult);
+		}
+
+		#endregion
+
+		#region CreateUserAsync Tests
+
+		//[Fact]
+		//public async Task GivenNewUser_WhenCreateUserAsyncIsCalled_ThenReturnFullUsers()
+		//{
+		//	// Arrange
+		//	const int COUNT = 10;
+		//	var newUser = new Fixture()
+		//		.Create<UserEntity>();
+		//	var filteredUsersResult = new Fixture()
+		//		.CreateMany<UserEntity>(COUNT)
+		//		.ToList();
+
+		//	_unitOfWork.UserRepository
+		//		.Create(newUser)
+		//		.Returns(filteredUsersResult);
+		//	// Act
+		//	var filteredUsers = await _sut.FindUsersAsync(null!);
+
+		//	// Assert
+		//	filteredUsers.Should().BeEquivalentTo(filteredUsersResult);
+		//}
+
+		#endregion
+
+		#region UpdateUserAsync Tests
+
+		#endregion
+
+		#region DeleteUserAsync Tests
+
+		#endregion
 	}
 }

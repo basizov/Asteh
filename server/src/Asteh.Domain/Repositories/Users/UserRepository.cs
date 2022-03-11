@@ -1,4 +1,4 @@
-﻿using Asteh.Domain.Database;
+﻿using Asteh.Domain.DataProvider;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 

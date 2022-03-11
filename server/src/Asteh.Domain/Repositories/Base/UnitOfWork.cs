@@ -1,4 +1,4 @@
-﻿using Asteh.Domain.Database;
+﻿using Asteh.Domain.DataProvider;
 using Asteh.Domain.Exceptions;
 using Asteh.Domain.Repositories.Users;
 using Asteh.Domain.Repositories.UserTypes;

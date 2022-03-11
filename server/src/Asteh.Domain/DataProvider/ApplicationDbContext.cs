@@ -2,9 +2,9 @@
 using Asteh.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Asteh.Domain.Database
+namespace Asteh.Domain.DataProvider
 {
-	internal class ApplicationDbContext : DbContext, IApplicationContext
+	internal class ApplicationDbContext : DbContext, IDataProvider
 	{
 		public ApplicationDbContext(DbContextOptions options) : base(options)
 		{

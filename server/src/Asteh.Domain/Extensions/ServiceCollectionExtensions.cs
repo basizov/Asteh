@@ -1,5 +1,5 @@
 ﻿using Asteh.Domain.Configuration;
-using Asteh.Domain.Database;
+using Asteh.Domain.DataProvider;
 using Asteh.Domain.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return services
 				.AddSingleton(dataSettings)
-				.AddDbContext<IApplicationContext, ApplicationDbContext>(opt =>
+				.AddDbContext<IDataProvider, ApplicationDbContext>(opt =>
 				{
 					opt.UseSqlite(dataSettings.DbConnectionString)
 						.UseSnakeCaseNamingConvention();
