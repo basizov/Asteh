@@ -1,5 +1,6 @@
 ﻿using Asteh.Core.Helpers;
 using Asteh.Core.Models;
+using Asteh.Core.Models.RequestModels;
 using Asteh.Core.Services.Users;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
@@ -221,26 +222,46 @@ namespace Asteh.Core.UnitTests
 
 		#region CreateUserAsync Tests
 
-		//[Fact]
-		//public async Task GivenNewUser_WhenCreateUserAsyncIsCalled_ThenReturnFullUsers()
-		//{
-		//	// Arrange
-		//	const int COUNT = 10;
-		//	var newUser = new Fixture()
-		//		.Create<UserEntity>();
-		//	var filteredUsersResult = new Fixture()
-		//		.CreateMany<UserEntity>(COUNT)
-		//		.ToList();
+		[Fact]
+		public async Task GivenExistedLogin_WhenCreateUserAsyncIsCalled_ThenThrowArgumentException()
+		{
+			// Arrange
+			var newUser = new Fixture()
+				.Create<UserCreateModel>();
 
-		//	_unitOfWork.UserRepository
-		//		.Create(newUser)
-		//		.Returns(filteredUsersResult);
-		//	// Act
-		//	var filteredUsers = await _sut.FindUsersAsync(null!);
+			_unitOfWork.UserRepository
+				.AnyAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(true);
+			// Act
+			var filteredUsers = async () =>await _sut.CreateUserAsync(newUser);
 
-		//	// Assert
-		//	filteredUsers.Should().BeEquivalentTo(filteredUsersResult);
-		//}
+			// Assert
+			await filteredUsers.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"User with email: {newUser.Login} is exists");
+		}
+
+		[Fact]
+		public async Task GivenInvalidTypeName_WhenCreateUserAsyncIsCalled_ThenThrowArgumentException()
+		{
+			// Arrange
+			var newUser = new Fixture()
+				.Create<UserCreateModel>();
+
+			_unitOfWork.UserRepository
+				.AnyAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(false);
+			_unitOfWork.UserTypeRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserTypeEntity, bool>>>())
+				.Returns(Task.FromResult<UserTypeEntity?>(null));
+			// Act
+			var filteredUsers = async () =>await _sut.CreateUserAsync(newUser);
+
+			// Assert
+			await filteredUsers.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"UserType with name: {newUser.TypeName} doesn't exists");
+		}
 
 		#endregion
 
