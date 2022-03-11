@@ -8,6 +8,9 @@ namespace Asteh.Domain.Repositories.Base
 		Task<IReadOnlyCollection<T>> FindByAsync(
 			Expression<Func<T, bool>> expression,
 			CancellationToken cancellationToken = default);
+		Task<T?> SingleOrDefaultAsync(
+			Expression<Func<T, bool>> expression,
+			CancellationToken cancellationToken = default);
 		Task<bool> AnyAsync(
 			Expression<Func<T, bool>> expression,
 			CancellationToken cancellationToken = default);

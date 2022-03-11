@@ -5,7 +5,8 @@ namespace Asteh.Core.Services.Users
 {
 	public interface IUserService
 	{
-		Task<IEnumerable<UserModel>> GetUsersAsync(CancellationToken cancellationToken = default);
+		Task<IEnumerable<UserModel>> GetUsersAsync(
+			CancellationToken cancellationToken = default);
 		Task<IEnumerable<UserModel>> FindUsersAsync(
 			FilterUserModel filter,
 			CancellationToken cancellationToken = default);

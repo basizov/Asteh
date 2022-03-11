@@ -17,7 +17,8 @@ namespace Asteh.Core.Services.Users
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<IEnumerable<UserModel>> GetUsersAsync(CancellationToken cancellationToken = default)
+		public async Task<IEnumerable<UserModel>> GetUsersAsync(
+			CancellationToken cancellationToken = default)
 		{
 			var	users = await _unitOfWork.UserRepository.GetAllAsync(cancellationToken);
 			var	resultUsers = _mapper.Map<IEnumerable<UserModel>>(users);
@@ -59,7 +60,7 @@ namespace Asteh.Core.Services.Users
 					filter.Name,
 					filter.TypeName,
 					isCorrectBeginDate ? null : beginDate,
-					isEndDateNullOrWmpty ? null : endDate));
+					isEndDateNullOrWmpty ? null : endDate), cancellationToken);
 			var resultFilteredUsers = _mapper.Map<IEnumerable<UserModel>>(filterUsers);
 			return resultFilteredUsers;
 		}
@@ -89,19 +90,81 @@ namespace Asteh.Core.Services.Users
 			UserCreateModel model,
 			CancellationToken cancellationToken = default)
 		{
-			if (await _unitOfWork.UserRepository.AnyAsync(d => d.Login.Equals(model.Login)))
+			if (await _unitOfWork.UserRepository.AnyAsync(
+				d => d.Login.Equals(model.Login), cancellationToken))
 			{
 				throw new ArgumentException($"User with email: {model.Login} is exists");
 			}
+
+			var userType = await FindSingleUserTypeAsync(model.TypeName, cancellationToken);
+			var userEntity = new UserEntity
+			{
+				Login = model.Login,
+				Name = model.Name,
+				Password = model.Password,
+				TypeId = userType.Id,
+				LastVisitDate = DateTime.UtcNow
+			};
+			_unitOfWork.UserRepository.Create(userEntity);
+			await _unitOfWork.SaveChangesAsync(cancellationToken);
 		}
 
-		public Task UpdateUserAsync(
+		public async Task UpdateUserAsync(
 			int id,
 			UserUpdateModel model,
-			CancellationToken cancellationToken = default) => throw new NotImplementedException();
+			CancellationToken cancellationToken = default)
+		{
+			var user = await FindSingleUserAsync(id, cancellationToken);
+			user.Name = model.Name;
+			user.Password = model.Password;
 
-		public Task DeleteUserAsync(
+			var userType = await FindSingleUserTypeAsync(model.TypeName, cancellationToken);
+			user.TypeId = userType.Id;
+
+			var isValidNewDate = DateTime.TryParse(model.LastVisitDate, out var newDate);
+			if (!isValidNewDate)
+			{
+				throw new ArgumentException($"Invalid new lastVisitDate {model.LastVisitDate}");
+			}
+			user.LastVisitDate = newDate;
+
+			_unitOfWork.UserRepository.Update(user);
+			await _unitOfWork.SaveChangesAsync(cancellationToken);
+		}
+
+		private async Task<UserTypeEntity> FindSingleUserTypeAsync(
+			string typeName,
+			CancellationToken cancellationToken)
+		{
+			var userType = await _unitOfWork.UserTypeRepository
+				.SingleOrDefaultAsync(d => d.Name.Equals(typeName), cancellationToken);
+			if (userType is null)
+			{
+				throw new ArgumentException($"UserType with name: {typeName} doesn't exists");
+			}
+			return userType;
+		}
+
+		public async Task DeleteUserAsync(
 			int id,
-			CancellationToken cancellationToken = default) => throw new NotImplementedException();
+			CancellationToken cancellationToken = default)
+		{
+			var user = await FindSingleUserAsync(id, cancellationToken);
+			_unitOfWork.UserRepository.Delete(user);
+			await _unitOfWork.SaveChangesAsync(cancellationToken);
+		}
+
+		private async Task<UserEntity> FindSingleUserAsync(
+			int id,
+			CancellationToken cancellationToken)
+		{
+			var user = await _unitOfWork.UserRepository
+				.SingleOrDefaultAsync(d => d.Id == id, cancellationToken);
+			if (user is null)
+			{
+				throw new ArgumentException($"User with id: {id} doesn't exists");
+			}
+			return user;
+		}
 	}
 }

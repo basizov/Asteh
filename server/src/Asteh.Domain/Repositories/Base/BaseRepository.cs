@@ -33,6 +33,16 @@ namespace Asteh.Domain.Repositories.Base
 				.ToListAsync(cancellationToken);
 		}
 
+		public async Task<T?> SingleOrDefaultAsync(
+			Expression<Func<T, bool>> expression,
+			CancellationToken cancellationToken = default)
+		{
+			return await _entities
+				.Where(expression)
+				.AsNoTracking()
+				.SingleOrDefaultAsync(cancellationToken);
+		}
+
 		public async Task<bool> AnyAsync(
 			Expression<Func<T, bool>> expression,
 			CancellationToken cancellationToken = default)
