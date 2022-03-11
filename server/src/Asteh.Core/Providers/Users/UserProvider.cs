@@ -5,7 +5,7 @@ using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 using AutoMapper;
 
-namespace Asteh.Domain.Providers.Users
+namespace Asteh.Core.Providers.Users
 {
 	public class UserProvider : IUserProvider<UserProvider>
 	{

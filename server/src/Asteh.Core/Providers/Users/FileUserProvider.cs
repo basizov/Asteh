@@ -5,7 +5,7 @@ using Asteh.Core.Models.RequestModels;
 using Asteh.Domain.Configuration;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Policies;
-using Asteh.Domain.Providers.Users;
+using Asteh.Core.Providers.Users;
 using AutoMapper;
 using System.Text.Json;
 

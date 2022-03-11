@@ -1,9 +1,8 @@
 ﻿using Asteh.Api.Examples;
-using Asteh.Api.Examples.User;
+using Asteh.Api.Examples.Users;
 using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
 using Asteh.Core.Providers.Users;
-using Asteh.Domain.Providers.Users;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -31,7 +30,6 @@ namespace Asteh.Api.Controllers
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>Users collection</returns>
 		/// <response code="200">Successfully get users</response>
-		/// <response code="400">Some error during get users</response>response>
 		[HttpGet]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]

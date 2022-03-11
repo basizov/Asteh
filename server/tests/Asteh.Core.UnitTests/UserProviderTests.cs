@@ -1,7 +1,7 @@
 ﻿using Asteh.Core.Helpers;
 using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
-using Asteh.Domain.Providers.Users;
+using Asteh.Core.Providers.Users;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 using AutoFixture;
@@ -54,7 +54,6 @@ namespace Asteh.Core.UnitTests
 			var users = await _sut.GetUsersAsync();
 
 			// Assert
-			var a = users.Count();
 			users.Should().HaveCount(usersCount);
 		}
 

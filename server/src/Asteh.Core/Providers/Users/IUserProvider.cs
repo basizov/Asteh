@@ -1,7 +1,7 @@
 ﻿using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
 
-namespace Asteh.Domain.Providers.Users
+namespace Asteh.Core.Providers.Users
 {
 	public interface IUserProvider<T>
 		where T : class

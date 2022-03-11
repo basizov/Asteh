@@ -1,7 +1,7 @@
 ﻿using Asteh.Core.Models;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace Asteh.Api.Examples.User
+namespace Asteh.Api.Examples.Users
 {
 	public class GetUsersResponseExample : IExamplesProvider<IEnumerable<UserModel>>
 	{

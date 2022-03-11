@@ -13,6 +13,7 @@ namespace Asteh.Core.Helpers
 				.ForMember(
 					d => d.TypeName,
 					o => o.MapFrom(s => s.Type != null ? s.Type.Name : "-"));
+			CreateMap<UserTypeEntity, UserTypeModel>();
 		}
 	}
 }

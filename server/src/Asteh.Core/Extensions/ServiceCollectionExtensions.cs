@@ -1,5 +1,5 @@
 ﻿using Asteh.Core.Providers.Users;
-using Asteh.Domain.Providers.Users;
+using Asteh.Core.Providers.UserTypes;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -9,6 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return services
 				.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
+				.AddTransient<IUserTypeProvider, UserTypeProvider>()
 				.AddTransient<IUserProvider<FileUserProvider>, FileUserProvider>()
 				.AddTransient<IUserProvider<UserProvider>, UserProvider>();
 		}

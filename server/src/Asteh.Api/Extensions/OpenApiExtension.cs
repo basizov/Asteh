@@ -1,6 +1,6 @@
 ﻿using Asteh.Api.Configuration;
 using Asteh.Api.Examples;
-using Asteh.Api.Examples.User;
+using Asteh.Api.Examples.Users;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Microsoft.Extensions.DependencyInjection
