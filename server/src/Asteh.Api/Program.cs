@@ -1,13 +1,12 @@
 ﻿using Asteh.Api.Configuration;
+using Asteh.Api.Middlewares;
 using Asteh.Api.SeedProviders;
-using Asteh.Domain.DataProvider;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt => opt.SuppressAsyncSuffixInActionNames = false);
 
 var openApiDescriptionSection = config.GetSection("OpenApiDescription");
 var creatorContactsSection = config.GetSection("CreatorContacts");
@@ -31,6 +30,7 @@ builder.Services.AddCoreSystem();
 var app = builder.Build();
 await app.SeedUsersAsync(dataSettings.FileSerializerString);
 
+app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();

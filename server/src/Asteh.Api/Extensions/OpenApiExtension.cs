@@ -39,6 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     opt.ExampleFilters();
                 })
                 .AddSwaggerExamplesFromAssemblyOf<ErrorExample>()
+                .AddSwaggerExamplesFromAssemblyOf<GetUserResponseExample>()
                 .AddSwaggerExamplesFromAssemblyOf<GetUsersResponseExample>();
 		}
 	}

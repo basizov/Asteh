@@ -22,8 +22,21 @@ namespace Asteh.Domain.Providers.Users
 		{
 			var users = await _unitOfWork.UserRepository
 				.GetAllWithLazyLoadingAsync(cancellationToken);
-			var resultUsers = _mapper.Map<IEnumerable<UserModel>>(users);
-			return resultUsers;
+			return _mapper.Map<IEnumerable<UserModel>>(users);
+		}
+
+		public async Task<UserModel> GetUserByIdAsync(
+			int id,
+			CancellationToken cancellationToken = default)
+		{
+			var user = await _unitOfWork.UserRepository
+				.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+			if (user == null)
+			{
+				throw new ArgumentException($"Invalid user identifier {id}");
+			}
+			return _mapper.Map<UserModel>(user);
 		}
 
 		public async Task<IEnumerable<UserModel>> FindUsersAsync(
@@ -56,16 +69,15 @@ namespace Asteh.Domain.Providers.Users
 			var filterType = filter.TypeName;
 			DateTime? filterBeginDate = isCorrectBeginDate ? null : beginDate;
 			DateTime? filterEndDate = isEndDateNullOrWmpty ? null : endDate;
-			var filterUsers = await _unitOfWork.UserRepository.FindByWithLazyLoadingAsync(d =>
+			var filterUsers = await _unitOfWork.UserRepository.FindByAsync(d =>
 				(filterName == null || d.Name.Equals(filterName)) &&
 				(filterType == null || d.Type!.Name.Equals(filterType)) &&
 				(filterBeginDate == null || d.LastVisitDate >= filterBeginDate) &&
 				(filterEndDate == null || d.LastVisitDate <= filterEndDate), cancellationToken);
-			var resultFilteredUsers = _mapper.Map<IEnumerable<UserModel>>(filterUsers);
-			return resultFilteredUsers;
+			return _mapper.Map<IEnumerable<UserModel>>(filterUsers);
 		}
 
-		public async Task CreateUserAsync(
+		public async Task<int> CreateUserAsync(
 			UserCreateModel model,
 			CancellationToken cancellationToken = default)
 		{
@@ -84,8 +96,9 @@ namespace Asteh.Domain.Providers.Users
 				TypeId = userType.Id,
 				LastVisitDate = DateTime.UtcNow
 			};
-			_unitOfWork.UserRepository.Create(userEntity);
+			var	newUserEntity = _unitOfWork.UserRepository.Create(userEntity);
 			await _unitOfWork.SaveChangesAsync(cancellationToken);
+			return newUserEntity.Id;
 		}
 
 		public async Task UpdateUserAsync(

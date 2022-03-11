@@ -8,7 +8,7 @@ namespace Asteh.Domain.Policies
 
 		public override string ConvertName(string name) => ToSnakeCase(name);
 
-        private string ToSnakeCase(string input)
+        private static string ToSnakeCase(string input)
         {
             var result = input.Select((x, i) => i > 0 && char.IsUpper(x) ? $"_{x}" : $"{x}");
             return string.Concat(result).ToLower();

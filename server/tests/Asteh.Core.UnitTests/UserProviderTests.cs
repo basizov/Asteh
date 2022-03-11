@@ -118,7 +118,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.FindByWithLazyLoadingAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.FindByAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(filter);
@@ -209,7 +209,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.FindByWithLazyLoadingAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.FindByAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(filter);
@@ -267,6 +267,8 @@ namespace Asteh.Core.UnitTests
 		public async Task GivenValidData_WhenCreateUserAsyncIsCalled_ThenWithoutReturning()
 		{
 			// Arrange
+			var userEntity = new Fixture()
+				.Create<UserEntity>();
 			var newUser = new Fixture()
 				.Create<UserCreateModel>();
 			var userTypeEntity = new Fixture()
@@ -275,6 +277,9 @@ namespace Asteh.Core.UnitTests
 			_unitOfWork.UserRepository
 				.AnyAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
 				.Returns(false);
+			_unitOfWork.UserRepository
+				.Create(Arg.Any<UserEntity>())
+				.Returns(userEntity);
 			_unitOfWork.UserTypeRepository
 				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserTypeEntity, bool>>>())
 				.Returns(Task.FromResult<UserTypeEntity?>(userTypeEntity));

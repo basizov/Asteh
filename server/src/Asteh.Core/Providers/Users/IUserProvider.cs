@@ -7,10 +7,13 @@ namespace Asteh.Domain.Providers.Users
 	{
 		Task<IEnumerable<UserModel>> GetUsersAsync(
 			CancellationToken cancellationToken = default);
+		Task<UserModel> GetUserByIdAsync(
+			int id,
+			CancellationToken cancellationToken = default);
 		Task<IEnumerable<UserModel>> FindUsersAsync(
 			FilterUserModel filter,
 			CancellationToken cancellationToken = default);
-		Task CreateUserAsync(
+		Task<int> CreateUserAsync(
 			UserCreateModel model,
 			CancellationToken cancellationToken = default);
 		Task UpdateUserAsync(

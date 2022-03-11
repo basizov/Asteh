@@ -39,16 +39,6 @@ namespace Asteh.Domain.Repositories.Base
 		{
 			return await _entities
 				.Where(expression)
-				.AsNoTracking()
-				.ToListAsync(cancellationToken);
-		}
-
-		public async Task<IReadOnlyCollection<T>> FindByWithLazyLoadingAsync(
-			Expression<Func<T, bool>> expression,
-			CancellationToken cancellationToken = default)
-		{
-			return await _entities
-				.Where(expression)
 				.ToListAsync(cancellationToken);
 		}
 
@@ -58,7 +48,6 @@ namespace Asteh.Domain.Repositories.Base
 		{
 			return await _entities
 				.Where(expression)
-				.AsNoTracking()
 				.SingleOrDefaultAsync(cancellationToken);
 		}
 
