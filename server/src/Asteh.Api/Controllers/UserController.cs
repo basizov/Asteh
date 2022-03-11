@@ -2,6 +2,7 @@
 using Asteh.Api.Examples.User;
 using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
+using Asteh.Core.Providers.Users;
 using Asteh.Domain.Providers.Users;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Filters;
@@ -12,16 +13,21 @@ namespace Asteh.Api.Controllers
 	[Route("[controller]")]
 	public class UserController : ControllerBase
 	{
-		private readonly IUserProvider _userProvider;
+		private readonly IUserProvider<UserProvider> _userProvider;
+		private readonly IUserProvider<FileUserProvider> _fileUserProvider;
 
-		public UserController(IUserProvider userProvider)
+		public UserController(
+			IUserProvider<UserProvider> userProvider,
+			IUserProvider<FileUserProvider> fileUserProvider)
 		{
 			_userProvider = userProvider;
+			_fileUserProvider = fileUserProvider;
 		}
 
 		/// <summary>
 		/// Get all users from the database
 		/// </summary>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>Users collection</returns>
 		/// <response code="200">Successfully get users</response>
@@ -31,19 +37,21 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(GetUsersResponseExample))]
 		public async Task<ActionResult<IEnumerable<UserModel>>> GetUsersAsync(
-			CancellationToken cancellationToken)
+			[FromQuery] bool fromDatabase = true,
+			CancellationToken cancellationToken = default)
 		{
 			// TODO: Just for testing!
 			//await Task.Delay(5000);
-
-			var result = await _userProvider.GetUsersAsync(cancellationToken);
-			return Ok(result);
+			return Ok(fromDatabase
+				? await _userProvider.GetUsersAsync(cancellationToken)
+				: await _fileUserProvider.GetUsersAsync(cancellationToken));
 		}
 
 		/// <summary>
 		/// Get user by id from the database
 		/// </summary>
 		/// <param name="id">User identifier</param>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>User</returns>
 		/// <response code="200">Successfully get user</response>
@@ -56,13 +64,16 @@ namespace Asteh.Api.Controllers
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		public async Task<ActionResult<IEnumerable<UserModel>>> GetUserByIdAsync(
 			int id,
-			CancellationToken cancellationToken)
+			[FromQuery] bool fromDatabase = true,
+			CancellationToken cancellationToken = default)
 		{
 			// TODO: Just for testing!
 			//await Task.Delay(5000);
 			try
 			{
-				return Ok(await _userProvider.GetUserByIdAsync(id, cancellationToken));
+				return Ok(fromDatabase
+					? await _userProvider.GetUserByIdAsync(id, cancellationToken)
+					: await _fileUserProvider.GetUserByIdAsync(id, cancellationToken));
 			}
 			catch (ArgumentException ex)
 			{
@@ -74,6 +85,7 @@ namespace Asteh.Api.Controllers
 		/// Find all users from the database satisfying filter
 		/// </summary>
 		/// <param name="filter">Filter values to get only neccessary users</param>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>Users collection</returns>
 		/// <response code="200">Successfully get filtered users</response>
@@ -86,13 +98,16 @@ namespace Asteh.Api.Controllers
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		public async Task<ActionResult<IEnumerable<UserModel>>> FindUsersAsync(
 			[FromQuery] FilterUserModel filter,
-			CancellationToken cancellationToken)
+			[FromQuery] bool fromDatabase = true,
+			CancellationToken cancellationToken = default)
 		{
 			// TODO: Just for testing!
 			//await Task.Delay(5000);
 			try
 			{
-				return Ok(await _userProvider.FindUsersAsync(filter, cancellationToken));
+				return Ok(fromDatabase
+					? await _userProvider.FindUsersAsync(filter, cancellationToken)
+					: await _fileUserProvider.FindUsersAsync(filter, cancellationToken));
 			}
 			catch (ArgumentException ex)
 			{
@@ -104,6 +119,7 @@ namespace Asteh.Api.Controllers
 		/// Create new user to the database
 		/// </summary>
 		/// <param name="createModel">Model to create new user</param>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>Created user</returns>
 		/// <response code="201">Successfully create user</response>
@@ -116,15 +132,17 @@ namespace Asteh.Api.Controllers
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		public async Task<ActionResult<UserModel>> CreateUserAsync(
 			[FromBody] UserCreateModel createModel,
-			CancellationToken cancellationToken)
+			[FromQuery] bool fromDatabase = true,
+			CancellationToken cancellationToken = default)
 		{
 			// TODO: Just for testing!
 			//await Task.Delay(5000);
 			try
 			{
 				var a = nameof(GetUserByIdAsync);
-				var id = await _userProvider
-					.CreateUserAsync(createModel, cancellationToken);
+				var id = fromDatabase
+					? await _userProvider.CreateUserAsync(createModel, cancellationToken)
+					: await _fileUserProvider.CreateUserAsync(createModel, cancellationToken);
 				return CreatedAtAction(a, new {
 					id,
 					cancellationToken
@@ -141,6 +159,7 @@ namespace Asteh.Api.Controllers
 		/// </summary>
 		/// <param name="id">Existed user identifier</param>
 		/// <param name="updateModel">Model to update new user</param>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>No content</returns>
 		/// <response code="204">Successfully updated user</response>response>
@@ -153,14 +172,18 @@ namespace Asteh.Api.Controllers
 		public async Task<ActionResult<UserModel>> UpdateUserAsync(
 			[FromRoute] int id,
 			[FromBody] UserUpdateModel updateModel,
-			CancellationToken cancellationToken)
+			[FromQuery] bool fromDatabase = true,
+			CancellationToken cancellationToken = default)
 		{
 			// TODO: Just for testing!
 			//await Task.Delay(5000);
 			try
 			{
-				await _userProvider
-					.UpdateUserAsync(id, updateModel, cancellationToken);
+				if (fromDatabase)
+				{
+					await _userProvider.UpdateUserAsync(id, updateModel, cancellationToken);
+				}
+				await _fileUserProvider.UpdateUserAsync(id, updateModel, cancellationToken);
 				return NoContent();
 			}
 			catch (ArgumentException ex)
@@ -173,6 +196,7 @@ namespace Asteh.Api.Controllers
 		/// Delete existed user in the database
 		/// </summary>
 		/// <param name="id">Existed user identifier</param>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>No content</returns>
 		/// <response code="204">Successfully deleted user</response>response>
@@ -184,14 +208,18 @@ namespace Asteh.Api.Controllers
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		public async Task<ActionResult<UserModel>> DeleteUserAsync(
 			int id,
-			CancellationToken cancellationToken)
+			[FromQuery] bool fromDatabase = true,
+			CancellationToken cancellationToken = default)
 		{
 			// TODO: Just for testing!
 			//await Task.Delay(5000);
 			try
 			{
-				await _userProvider
-					.DeleteUserAsync(id, cancellationToken);
+				if (fromDatabase)
+				{
+					await _userProvider.DeleteUserAsync(id, cancellationToken);
+				}
+				await _fileUserProvider.DeleteUserAsync(id, cancellationToken);
 				return NoContent();
 			}
 			catch (ArgumentException ex)

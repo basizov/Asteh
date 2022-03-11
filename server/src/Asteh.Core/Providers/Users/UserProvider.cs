@@ -1,4 +1,5 @@
-﻿using Asteh.Core.Models;
+﻿using Asteh.Core.Helpers;
+using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
@@ -6,7 +7,7 @@ using AutoMapper;
 
 namespace Asteh.Domain.Providers.Users
 {
-	public class UserProvider : IUserProvider
+	public class UserProvider : IUserProvider<UserProvider>
 	{
 		private readonly IMapper _mapper;
 		private readonly IUnitOfWork _unitOfWork;
@@ -21,7 +22,7 @@ namespace Asteh.Domain.Providers.Users
 			CancellationToken cancellationToken = default)
 		{
 			var users = await _unitOfWork.UserRepository
-				.GetAllWithLazyLoadingAsync(cancellationToken);
+				.GetAllAsync(cancellationToken);
 			return _mapper.Map<IEnumerable<UserModel>>(users);
 		}
 
@@ -43,23 +44,13 @@ namespace Asteh.Domain.Providers.Users
 			FilterUserModel filter,
 			CancellationToken cancellationToken = default)
 		{
-			var isBeginDateNullOrWmpty = string.IsNullOrEmpty(filter?.BeginDate ?? null);
-			var isEndDateNullOrWmpty = string.IsNullOrEmpty(filter?.EndDate ?? null);
-			if (filter == null || (
-				string.IsNullOrEmpty(filter.Name) &&
-				string.IsNullOrEmpty(filter.TypeName) &&
-				isBeginDateNullOrWmpty &&
-				isEndDateNullOrWmpty))
+			if (!filter.CheckFilterUserModelForNullOrEmpty())
 			{
 				return await GetUsersAsync(cancellationToken);
 			}
 
-			var isCorrectBeginDate = DateTime
-				.TryParse(filter.BeginDate, out var beginDate) || isBeginDateNullOrWmpty;
-			var isCorrectEndDate = DateTime
-				.TryParse(filter.EndDate, out var endDate) || isEndDateNullOrWmpty;
-			if (!(isCorrectBeginDate && isCorrectEndDate &&
-				(beginDate < endDate || isBeginDateNullOrWmpty || isEndDateNullOrWmpty)))
+			var (result, beginDate, endDate) = filter.CheckFilterUserModelForCorrectDateTime();
+			if (!result)
 			{
 				throw new ArgumentException(
 					$"Uncorrect range date: {filter.BeginDate} - {filter.EndDate}");
@@ -67,13 +58,11 @@ namespace Asteh.Domain.Providers.Users
 
 			var filterName = filter.Name;
 			var filterType = filter.TypeName;
-			DateTime? filterBeginDate = isCorrectBeginDate ? null : beginDate;
-			DateTime? filterEndDate = isEndDateNullOrWmpty ? null : endDate;
 			var filterUsers = await _unitOfWork.UserRepository.FindByAsync(d =>
 				(filterName == null || d.Name.Equals(filterName)) &&
 				(filterType == null || d.Type!.Name.Equals(filterType)) &&
-				(filterBeginDate == null || d.LastVisitDate >= filterBeginDate) &&
-				(filterEndDate == null || d.LastVisitDate <= filterEndDate), cancellationToken);
+				(beginDate == null || d.LastVisitDate >= beginDate) &&
+				(endDate == null || d.LastVisitDate <= endDate), cancellationToken);
 			return _mapper.Map<IEnumerable<UserModel>>(filterUsers);
 		}
 
@@ -84,7 +73,7 @@ namespace Asteh.Domain.Providers.Users
 			if (await _unitOfWork.UserRepository.AnyAsync(
 				d => d.Login.Equals(model.Login), cancellationToken))
 			{
-				throw new ArgumentException($"User with email: {model.Login} is exists");
+				throw new ArgumentException($"User with login: {model.Login} is exists");
 			}
 
 			var userType = await FindSingleUserTypeAsync(model.TypeName, cancellationToken);

@@ -4,10 +4,7 @@ namespace Asteh.Domain.Repositories.Base
 {
 	public interface IBaseRepository<T>
 	{
-		IQueryable<T> GetAllToIncludeAsync();
 		Task<IReadOnlyCollection<T>> GetAllAsync(
-			CancellationToken cancellationToken = default);
-		Task<IReadOnlyCollection<T>> GetAllWithLazyLoadingAsync(
 			CancellationToken cancellationToken = default);
 		Task<IReadOnlyCollection<T>> FindByAsync(
 			Expression<Func<T, bool>> expression,

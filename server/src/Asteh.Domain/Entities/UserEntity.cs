@@ -7,7 +7,7 @@
 		public string Password { get; set; } = default!;
 		public string Name { get; set; } = default!;
 		public int TypeId { get; set; }
-		public virtual UserTypeEntity? Type { get; init; }
+		public virtual UserTypeEntity? Type { get; set; }
 		public DateTime LastVisitDate { get; set; }
 	}
 }

@@ -3,7 +3,8 @@ using Asteh.Core.Models.RequestModels;
 
 namespace Asteh.Domain.Providers.Users
 {
-	public interface IUserProvider
+	public interface IUserProvider<T>
+		where T : class
 	{
 		Task<IEnumerable<UserModel>> GetUsersAsync(
 			CancellationToken cancellationToken = default);

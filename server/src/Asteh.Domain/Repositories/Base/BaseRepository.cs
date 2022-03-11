@@ -16,17 +16,7 @@ namespace Asteh.Domain.Repositories.Base
 			_applicationDbContext = applicationDbContext;
 		}
 
-		public IQueryable<T> GetAllToIncludeAsync() => _entities.AsNoTracking();
-
 		public async Task<IReadOnlyCollection<T>> GetAllAsync(
-			CancellationToken cancellationToken = default)
-		{
-			return await _entities
-				.AsNoTracking()
-				.ToListAsync(cancellationToken);
-		}
-
-		public async Task<IReadOnlyCollection<T>> GetAllWithLazyLoadingAsync(
 			CancellationToken cancellationToken = default)
 		{
 			return await _entities

@@ -20,7 +20,7 @@ namespace Asteh.Core.UnitTests
 	public class UserProviderTests
 	{
 		private readonly IMapper _mapper;
-		private readonly IUserProvider _sut;
+		private readonly IUserProvider<UserProvider> _sut;
 		private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
 
 		public UserProviderTests()
@@ -49,7 +49,7 @@ namespace Asteh.Core.UnitTests
 				.CreateMany<UserEntity>(usersCount)
 				.ToList();
 
-			_unitOfWork.UserRepository.GetAllWithLazyLoadingAsync().Returns(usersResult);
+			_unitOfWork.UserRepository.GetAllAsync().Returns(usersResult);
 			// Act
 			var users = await _sut.GetUsersAsync();
 
@@ -68,7 +68,7 @@ namespace Asteh.Core.UnitTests
 				.ToList();
 			var usersDatesResult = usersResult.Select(u => u.LastVisitDate.ToString("dd.MM.yyyy"));
 
-			_unitOfWork.UserRepository.GetAllWithLazyLoadingAsync().Returns(usersResult);
+			_unitOfWork.UserRepository.GetAllAsync().Returns(usersResult);
 			// Act
 			var users = await _sut.GetUsersAsync();
 			var usersDates = users.Select(u => u.LastVisitDate);
@@ -88,7 +88,7 @@ namespace Asteh.Core.UnitTests
 			var usersTypesResult = usersResult.Select(
 				u => u.Type?.Name ?? throw new ArgumentNullException("Type couldn't be null"));
 
-			_unitOfWork.UserRepository.GetAllWithLazyLoadingAsync().Returns(usersResult);
+			_unitOfWork.UserRepository.GetAllAsync().Returns(usersResult);
 			// Act
 			var users = await _sut.GetUsersAsync();
 			var usersTypes = users.Select(u => u.TypeName);
@@ -185,7 +185,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.GetAllWithLazyLoadingAsync()
+				.GetAllAsync()
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(null!);
@@ -213,7 +213,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.GetAllWithLazyLoadingAsync()
+				.GetAllAsync()
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(filter);
@@ -284,7 +284,7 @@ namespace Asteh.Core.UnitTests
 			// Assert
 			await filteredUsers.Should()
 				.ThrowAsync<ArgumentException>()
-				.WithMessage($"User with email: {newUser.Login} is exists");
+				.WithMessage($"User with login: {newUser.Login} is exists");
 		}
 
 		[Fact]

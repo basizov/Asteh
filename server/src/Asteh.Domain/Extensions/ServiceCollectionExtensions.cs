@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return services
 				.AddSingleton(dataSettings)
-				.AddDbContext<IDataProvider, ApplicationDbContext>(opt =>
+				.AddDbContext<ApplicationDbContext>(opt =>
 				{
 					opt.UseLazyLoadingProxies()
 						.UseSqlite(dataSettings.DbConnectionString)
