@@ -99,6 +99,52 @@ namespace Asteh.Core.UnitTests
 
 		#endregion
 
+		#region GetUserByIdAsync Tests
+
+		[Theory]
+		[InlineData(43)]
+		[InlineData(98)]
+		[InlineData(6571)]
+		[InlineData(334)]
+		public async Task GivenInvalidId_WhenGetUserByIdAsyncIsCalled_ThenThrowArgumentException(int id)
+		{
+			// Arrange
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(null));
+			// Act
+			var getByIdUser = async () => await _sut.GetUserByIdAsync(id);
+
+			// Assert
+			await getByIdUser.Should()
+				.ThrowAsync<ArgumentException>()
+				.WithMessage($"Invalid user identifier {id}");
+		}
+
+		[Theory]
+		[InlineData(7)]
+		[InlineData(265)]
+		[InlineData(639)]
+		[InlineData(8)]
+		public async Task GivenValidId_WhenGetUserByIdAsyncIsCalled_ThenSuccessTakenUser(int id)
+		{
+			// Arrange
+			var	userEntity = new Fixture()
+				.Create<UserEntity>();
+			var userModel = _mapper.Map<UserModel>(userEntity);
+
+			_unitOfWork.UserRepository
+				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.Returns(Task.FromResult<UserEntity?>(userEntity));
+			// Act
+			var getByIdUser = await _sut.GetUserByIdAsync(id);
+
+			// Assert
+			getByIdUser.Should().BeEquivalentTo(userModel);
+		}
+
+		#endregion
+
 		#region FindUsersAsync Tests
 
 		[Fact]
