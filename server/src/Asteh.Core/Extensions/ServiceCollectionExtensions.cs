@@ -1,4 +1,4 @@
-﻿using Asteh.Core.Services.Users;
+﻿using Asteh.Domain.Providers.Users;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -8,7 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return services
 				.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-				.AddTransient<IUserService, UserService>();
+				.AddTransient<IUserProvider, UserProvider>();
 		}
 	}
 }

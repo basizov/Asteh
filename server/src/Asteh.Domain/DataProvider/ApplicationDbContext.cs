@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Asteh.Domain.DataProvider
 {
-	internal class ApplicationDbContext : DbContext, IDataProvider
+	public class ApplicationDbContext : DbContext, IDataProvider
 	{
 		public ApplicationDbContext(DbContextOptions options) : base(options)
 		{

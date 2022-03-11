@@ -15,7 +15,8 @@ namespace Microsoft.Extensions.DependencyInjection
 				.AddSingleton(dataSettings)
 				.AddDbContext<IDataProvider, ApplicationDbContext>(opt =>
 				{
-					opt.UseSqlite(dataSettings.DbConnectionString)
+					opt.UseLazyLoadingProxies()
+						.UseSqlite(dataSettings.DbConnectionString)
 						.UseSnakeCaseNamingConvention();
 				})
 				.AddTransient<IUnitOfWork, UnitOfWork>();

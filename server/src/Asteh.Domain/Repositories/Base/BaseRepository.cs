@@ -16,10 +16,20 @@ namespace Asteh.Domain.Repositories.Base
 			_applicationDbContext = applicationDbContext;
 		}
 
-		public async Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken = default)
+		public IQueryable<T> GetAllToIncludeAsync() => _entities.AsNoTracking();
+
+		public async Task<IReadOnlyCollection<T>> GetAllAsync(
+			CancellationToken cancellationToken = default)
 		{
 			return await _entities
 				.AsNoTracking()
+				.ToListAsync(cancellationToken);
+		}
+
+		public async Task<IReadOnlyCollection<T>> GetAllWithLazyLoadingAsync(
+			CancellationToken cancellationToken = default)
+		{
+			return await _entities
 				.ToListAsync(cancellationToken);
 		}
 
@@ -30,6 +40,15 @@ namespace Asteh.Domain.Repositories.Base
 			return await _entities
 				.Where(expression)
 				.AsNoTracking()
+				.ToListAsync(cancellationToken);
+		}
+
+		public async Task<IReadOnlyCollection<T>> FindByWithLazyLoadingAsync(
+			Expression<Func<T, bool>> expression,
+			CancellationToken cancellationToken = default)
+		{
+			return await _entities
+				.Where(expression)
 				.ToListAsync(cancellationToken);
 		}
 

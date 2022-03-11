@@ -2,6 +2,7 @@
 {
 	public interface IDataSettings
 	{
-		string DbConnectionString { get; }
+		string DbConnectionString { get; init; }
+		string FileSerializerString { get; init; }
 	}
 }

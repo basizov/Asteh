@@ -1,9 +1,9 @@
 ﻿using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
 
-namespace Asteh.Core.Services.Users
+namespace Asteh.Domain.Providers.Users
 {
-	public interface IUserService
+	public interface IUserProvider
 	{
 		Task<IEnumerable<UserModel>> GetUsersAsync(
 			CancellationToken cancellationToken = default);

@@ -1,7 +1,7 @@
 ﻿using Asteh.Core.Helpers;
 using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
-using Asteh.Core.Services.Users;
+using Asteh.Domain.Providers.Users;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 using AutoFixture;
@@ -17,13 +17,13 @@ using Xunit;
 
 namespace Asteh.Core.UnitTests
 {
-	public class UserServiceTests
+	public class UserProviderTests
 	{
 		private readonly IMapper _mapper;
-		private readonly IUserService _sut;
+		private readonly IUserProvider _sut;
 		private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
 
-		public UserServiceTests()
+		public UserProviderTests()
 		{
 			if (_mapper == null)
 			{
@@ -32,7 +32,7 @@ namespace Asteh.Core.UnitTests
 				var mapper = mappingConfig.CreateMapper();
 				_mapper = mapper;
 			}
-			_sut = new UserService(_mapper, _unitOfWork);
+			_sut = new UserProvider(_mapper, _unitOfWork);
 		}
 
 		#region GetUsersAsync Tests
@@ -49,7 +49,7 @@ namespace Asteh.Core.UnitTests
 				.CreateMany<UserEntity>(usersCount)
 				.ToList();
 
-			_unitOfWork.UserRepository.GetAllAsync().Returns(usersResult);
+			_unitOfWork.UserRepository.GetAllWithLazyLoadingAsync().Returns(usersResult);
 			// Act
 			var users = await _sut.GetUsersAsync();
 
@@ -68,7 +68,7 @@ namespace Asteh.Core.UnitTests
 				.ToList();
 			var usersDatesResult = usersResult.Select(u => u.LastVisitDate.ToString("dd.MM.yyyy"));
 
-			_unitOfWork.UserRepository.GetAllAsync().Returns(usersResult);
+			_unitOfWork.UserRepository.GetAllWithLazyLoadingAsync().Returns(usersResult);
 			// Act
 			var users = await _sut.GetUsersAsync();
 			var usersDates = users.Select(u => u.LastVisitDate);
@@ -88,7 +88,7 @@ namespace Asteh.Core.UnitTests
 			var usersTypesResult = usersResult.Select(
 				u => u.Type?.Name ?? throw new ArgumentNullException("Type couldn't be null"));
 
-			_unitOfWork.UserRepository.GetAllAsync().Returns(usersResult);
+			_unitOfWork.UserRepository.GetAllWithLazyLoadingAsync().Returns(usersResult);
 			// Act
 			var users = await _sut.GetUsersAsync();
 			var usersTypes = users.Select(u => u.TypeName);
@@ -118,7 +118,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.FindByAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.FindByWithLazyLoadingAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(filter);
@@ -139,7 +139,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.GetAllAsync()
+				.GetAllWithLazyLoadingAsync()
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(null!);
@@ -167,7 +167,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.GetAllAsync()
+				.GetAllWithLazyLoadingAsync()
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(filter);
@@ -209,7 +209,7 @@ namespace Asteh.Core.UnitTests
 				.Map<IEnumerable<UserModel>>(filteredUsersResult);
 
 			_unitOfWork.UserRepository
-				.FindByAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
+				.FindByWithLazyLoadingAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
 				.Returns(filteredUsersResult);
 			// Act
 			var filteredUsers = await _sut.FindUsersAsync(filter);

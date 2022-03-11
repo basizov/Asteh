@@ -4,14 +4,14 @@ using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 using AutoMapper;
 
-namespace Asteh.Core.Services.Users
+namespace Asteh.Domain.Providers.Users
 {
-	public class UserService : IUserService
+	public class UserProvider : IUserProvider
 	{
 		private readonly IMapper _mapper;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public UserService(IMapper mapper, IUnitOfWork unitOfWork)
+		public UserProvider(IMapper mapper, IUnitOfWork unitOfWork)
 		{
 			_mapper = mapper;
 			_unitOfWork = unitOfWork;
@@ -20,8 +20,9 @@ namespace Asteh.Core.Services.Users
 		public async Task<IEnumerable<UserModel>> GetUsersAsync(
 			CancellationToken cancellationToken = default)
 		{
-			var	users = await _unitOfWork.UserRepository.GetAllAsync(cancellationToken);
-			var	resultUsers = _mapper.Map<IEnumerable<UserModel>>(users);
+			var users = await _unitOfWork.UserRepository
+				.GetAllWithLazyLoadingAsync(cancellationToken);
+			var resultUsers = _mapper.Map<IEnumerable<UserModel>>(users);
 			return resultUsers;
 		}
 
@@ -29,11 +30,8 @@ namespace Asteh.Core.Services.Users
 			FilterUserModel filter,
 			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			await Task.Delay(5000);
-
-			var isBeginDateNullOrWmpty = filter == null || string.IsNullOrEmpty(filter.BeginDate);
-			var isEndDateNullOrWmpty = filter == null || string.IsNullOrEmpty(filter.EndDate);
+			var isBeginDateNullOrWmpty = string.IsNullOrEmpty(filter?.BeginDate ?? null);
+			var isEndDateNullOrWmpty = string.IsNullOrEmpty(filter?.EndDate ?? null);
 			if (filter == null || (
 				string.IsNullOrEmpty(filter.Name) &&
 				string.IsNullOrEmpty(filter.TypeName) &&
@@ -54,36 +52,17 @@ namespace Asteh.Core.Services.Users
 					$"Uncorrect range date: {filter.BeginDate} - {filter.EndDate}");
 			}
 
-			var filterUsers = await _unitOfWork.UserRepository.FindByAsync(
-				d => CheckUserByFilter(
-					d,
-					filter.Name,
-					filter.TypeName,
-					isCorrectBeginDate ? null : beginDate,
-					isEndDateNullOrWmpty ? null : endDate), cancellationToken);
+			var filterName = filter.Name;
+			var filterType = filter.TypeName;
+			DateTime? filterBeginDate = isCorrectBeginDate ? null : beginDate;
+			DateTime? filterEndDate = isEndDateNullOrWmpty ? null : endDate;
+			var filterUsers = await _unitOfWork.UserRepository.FindByWithLazyLoadingAsync(d =>
+				(filterName == null || d.Name.Equals(filterName)) &&
+				(filterType == null || d.Type!.Name.Equals(filterType)) &&
+				(filterBeginDate == null || d.LastVisitDate >= filterBeginDate) &&
+				(filterEndDate == null || d.LastVisitDate <= filterEndDate), cancellationToken);
 			var resultFilteredUsers = _mapper.Map<IEnumerable<UserModel>>(filterUsers);
 			return resultFilteredUsers;
-		}
-
-		private static bool CheckUserByFilter(
-			UserEntity userEntity,
-			string name,
-			string typeName,
-			DateTime? beginDate,
-			DateTime? endDate)
-		{
-			if (userEntity == null)
-			{
-				throw new ArgumentNullException($"{nameof(userEntity)} couldn't be null");
-			}
-			else if (userEntity.Type is null)
-			{
-				throw new ArgumentException($"Type of the {nameof(userEntity)} couldn't be null");
-			}
-			return userEntity.Name.Equals(name) &&
-				userEntity.Type.Name.Equals(typeName) &&
-				(beginDate == null || userEntity.LastVisitDate >= beginDate) &&
-				(endDate == null || userEntity.LastVisitDate <= endDate);
 		}
 
 		public async Task CreateUserAsync(
