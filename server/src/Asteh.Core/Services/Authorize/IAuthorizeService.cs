@@ -3,7 +3,7 @@ using Asteh.Core.Models.RequestModels;
 
 namespace Asteh.Core.Services.Authorize
 {
-	public interface IAuthorizeService
+	public interface IAuthorizeService<T>
 	{
 		Task<FullInfoModel?> AuthorizeUserAsync(
 			AuthorizeModel authorizeModel,

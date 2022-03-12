@@ -20,7 +20,7 @@ namespace Asteh.Core.UnitTests
 	public class AuthorizeServiceTests
 	{
 		private readonly IMapper _mapper;
-		private readonly IAuthorizeService _sut;
+		private readonly IAuthorizeService<AuthorizeService> _sut;
 		private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
 
 		public AuthorizeServiceTests()

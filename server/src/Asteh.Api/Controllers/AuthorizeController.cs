@@ -12,16 +12,21 @@ namespace Asteh.Api.Controllers
 	[Route("[controller]")]
 	public class AuthorizeController : ControllerBase
 	{
-		private readonly IAuthorizeService _authorizeService;
+		private readonly IAuthorizeService<AuthorizeService> _authorizeService;
+		private readonly IAuthorizeService<FileAuthorizeService> _fileAuthorizeService;
 
-		public AuthorizeController(IAuthorizeService authorizeService)
+		public AuthorizeController(
+			IAuthorizeService<AuthorizeService> authorizeService,
+			IAuthorizeService<FileAuthorizeService> fileAuthorizeService)
 		{
 			_authorizeService = authorizeService;
+			_fileAuthorizeService = fileAuthorizeService;
 		}
 
 		/// <summary>
 		/// Endpoint to get all neccessary information
 		/// </summary>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns></returns>
 		/// <response code="200">Successfully get neccessary information</response>
@@ -30,10 +35,12 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(FullInfoExample))]
 		public async Task<ActionResult<FullInfoModel>> GetFullNeccessaryInfoAsync(
+			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			var fullInfo = await _authorizeService
-				.GetFullInfoModelToAuthorizeUser(cancellationToken);
+			var fullInfo = fromDatabase
+				? await _authorizeService.GetFullInfoModelToAuthorizeUser(cancellationToken)
+				: await _fileAuthorizeService.GetFullInfoModelToAuthorizeUser(cancellationToken);
 
 			var allowAcces = Request.Cookies[Constants.CookieAllowAccessTab];
 			if (allowAcces is not null &&
@@ -41,13 +48,14 @@ namespace Asteh.Api.Controllers
 			{
 				fullInfo.IsAccessEnabled = true;
 			}
-			return Ok();
+			return Ok(fullInfo);
 		}
 
 		/// <summary>
 		/// Endpoint to authorize user credentials
 		/// </summary>
 		/// <param name="authorizeModel">Model to authorize</param>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns></returns>
 		/// <response code="200">Successfully authorize user</response>
@@ -60,10 +68,12 @@ namespace Asteh.Api.Controllers
 		[SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(string))]
 		public async Task<ActionResult<FullInfoModel>> AuthorizeUserAsync(
 			AuthorizeModel authorizeModel,
+			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			var fullInfo = await _authorizeService.AuthorizeUserAsync(
-				authorizeModel, cancellationToken);
+			var fullInfo = fromDatabase
+				? await _authorizeService.AuthorizeUserAsync(authorizeModel, cancellationToken)
+				: await _fileAuthorizeService.AuthorizeUserAsync(authorizeModel, cancellationToken);
 			if (fullInfo is null)
 			{
 				return NotFound($"Invalid user credentials");

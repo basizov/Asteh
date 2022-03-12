@@ -10,7 +10,8 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return services
 				.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies())
-				.AddTransient<IAuthorizeService, AuthorizeService>()
+				.AddTransient<IAuthorizeService<AuthorizeService>, AuthorizeService>()
+				.AddTransient<IAuthorizeService<FileAuthorizeService>, FileAuthorizeService>()
 				.AddTransient<IUserTypeProvider<FileUserTypeProvider>, FileUserTypeProvider>()
 				.AddTransient<IUserTypeProvider<UserTypeProvider>, UserTypeProvider>()
 				.AddTransient<IUserProvider<FileUserProvider>, FileUserProvider>()
