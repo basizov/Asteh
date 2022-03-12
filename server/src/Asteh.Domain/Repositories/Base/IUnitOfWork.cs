@@ -8,6 +8,6 @@ namespace Asteh.Domain.Repositories.Base
 		IUserRepository UserRepository { get; }
 		IUserTypeRepository UserTypeRepository { get; }
 
-		Task SaveChangesAsync(CancellationToken cancellationToken);
+		Task SaveChangesAsync(CancellationToken cancellationToken = default);
 	}
 }

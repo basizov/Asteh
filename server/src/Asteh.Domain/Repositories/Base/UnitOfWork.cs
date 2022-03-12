@@ -23,7 +23,7 @@ namespace Asteh.Domain.Repositories.Base
 		public IUserTypeRepository UserTypeRepository =>
 			_userTypeRepository ??= new UserTypeRepository(_applicationDbContext);
 
-		public async Task SaveChangesAsync(CancellationToken cancellationToken)
+		public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
 		{
 			try
 			{
