@@ -89,7 +89,7 @@ namespace Asteh.Core.UnitTests
 
 			_unitOfWork.UserRepository
 				.SingleOrDefaultAsync(Arg.Any<Expression<Func<UserEntity, bool>>>())
-				.Returns(userResult);
+				.Returns(null as UserEntity);
 			// Act
 			var fullInfo = await _sut.AuthorizeUserAsync(authorizeUser!);
 

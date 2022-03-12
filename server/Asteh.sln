@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4EBEBA08
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteh.Core.UnitTests", "tests\Asteh.Core.UnitTests\Asteh.Core.UnitTests.csproj", "{71AF36DB-A06E-4303-90BC-2813F53601E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteh.Api.IntegrationTests", "tests\Asteh.Api.IntegrationTests\Asteh.Api.IntegrationTests.csproj", "{3FCB503B-FEA0-4E91-A19B-A92F37A30F7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{71AF36DB-A06E-4303-90BC-2813F53601E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71AF36DB-A06E-4303-90BC-2813F53601E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71AF36DB-A06E-4303-90BC-2813F53601E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FCB503B-FEA0-4E91-A19B-A92F37A30F7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FCB503B-FEA0-4E91-A19B-A92F37A30F7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FCB503B-FEA0-4E91-A19B-A92F37A30F7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FCB503B-FEA0-4E91-A19B-A92F37A30F7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{C9285D49-EF53-4D0D-99FF-81FAEAEF462F} = {4376194C-3D78-46AF-9876-9521479D57A6}
 		{A36AE455-CFF9-4501-B65F-F2F8C5A37B9E} = {4376194C-3D78-46AF-9876-9521479D57A6}
 		{71AF36DB-A06E-4303-90BC-2813F53601E0} = {4EBEBA08-F8E9-45CB-912B-049262603358}
+		{3FCB503B-FEA0-4E91-A19B-A92F37A30F7D} = {4EBEBA08-F8E9-45CB-912B-049262603358}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {52D9B300-6B90-40F0-BB1A-4D45C8CA0509}

@@ -15,7 +15,7 @@ namespace Asteh.Core.UnitTests
 	public class UserTypeProviderTests
 	{
 		private readonly IMapper _mapper;
-		private readonly IUserTypeProvider _sut;
+		private readonly IUserTypeProvider<UserTypeProvider> _sut;
 		private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
 
 		public UserTypeProviderTests()

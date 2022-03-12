@@ -1,4 +1,5 @@
-﻿using Asteh.Domain.DataProvider;
+﻿using Asteh.Core.Converters;
+using Asteh.Domain.DataProvider;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Policies;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,10 @@ namespace Asteh.Api.SeedProviders
 			var services = scope.ServiceProvider;
 			var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
-			await dbContext.Database.MigrateAsync();
+			if (dbContext.Database.IsRelational())
+			{
+				await dbContext.Database.MigrateAsync();
+			}
 
 			if (!dbContext.UserTypes.Any() && !dbContext.Users.Any())
 			{
@@ -24,6 +28,7 @@ namespace Asteh.Api.SeedProviders
 				{
 					PropertyNamingPolicy = SnakeCaseNamingPolicy.SnakeCase
 				};
+				serializerOptions.Converters.Add(new DateTimeConverterUsingDateTimeParse());
 
 				var userTypesFileName = "UserTypes.json";
 				using var openUserTypesStream = File

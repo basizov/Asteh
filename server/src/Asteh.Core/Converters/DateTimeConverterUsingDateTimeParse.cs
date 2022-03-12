@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Asteh.Core.Converters
 {
-	internal class DateTimeConverterUsingDateTimeParse : JsonConverter<DateTime>
+	public class DateTimeConverterUsingDateTimeParse : JsonConverter<DateTime>
     {
         public override DateTime Read(
             ref Utf8JsonReader reader,
