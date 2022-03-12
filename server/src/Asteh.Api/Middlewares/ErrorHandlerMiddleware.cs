@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using Asteh.Domain.Entities;
+using System.Net;
+using System.Text.Json;
 
 namespace Asteh.Api.Middlewares
 {
@@ -19,10 +21,18 @@ namespace Asteh.Api.Middlewares
 			}
 			catch (Exception ex)
 			{
-				// TODO: Add error entity
 				context.Response.ContentType = "application/json";
-				context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-				await context.Response.WriteAsync(ex.Message);
+
+				var statusCode = HttpStatusCode.InternalServerError;
+				context.Response.StatusCode = (int)statusCode;
+
+				var response = new ApplicationError
+				{
+					Message = ex.Message,
+					StatusCode = statusCode
+				};
+				await context.Response.WriteAsync(
+					JsonSerializer.Serialize(response));
 			}
 		}
 	}

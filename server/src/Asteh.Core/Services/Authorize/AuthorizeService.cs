@@ -21,7 +21,8 @@ namespace Asteh.Core.Services.Authorize
 			CancellationToken cancellationToken = default)
 		{
 			var user = await _unitOfWork.UserRepository
-				.SingleOrDefaultAsync(d => d.Login.Equals(authorizeModel.Login));
+				.SingleOrDefaultAsync(
+					d => d.Login.Equals(authorizeModel.Login), cancellationToken);
 
 			if (user is null)
 			{

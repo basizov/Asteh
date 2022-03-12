@@ -10,16 +10,21 @@ namespace Asteh.Api.Controllers
 	[Route("[controller]")]
 	public class UserTypeController : ControllerBase
 	{
-		private readonly IUserTypeProvider _userTypeProvider;
+		private readonly IUserTypeProvider<UserTypeProvider> _userTypeProvider;
+		private readonly IUserTypeProvider<FileUserTypeProvider> _fileUserTypeProvider;
 
-		public UserTypeController(IUserTypeProvider userTypeProvider)
+		public UserTypeController
+			(IUserTypeProvider<UserTypeProvider> userTypeProvider,
+			IUserTypeProvider<FileUserTypeProvider> fileUserTypeProvider)
 		{
 			_userTypeProvider = userTypeProvider;
+			_fileUserTypeProvider = fileUserTypeProvider;
 		}
 
 		/// <summary>
 		/// Get all user types from the database
 		/// </summary>
+		/// <param name="fromDatabase">Flag to work with db or file</param>
 		/// <param name="cancellationToken">Cancellation token to stop request</param>
 		/// <returns>User types</returns>
 		/// <response code="200">Successfully get users</response>
@@ -28,12 +33,12 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(GetUserTypesResponseExample))]
 		public async Task<ActionResult<IEnumerable<UserTypeModel>>> GetUserTypesAsync(
-			CancellationToken cancellationToken)
+			[FromQuery] bool fromDatabase = true,
+			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			//await Task.Delay(5000);
-			return Ok(await _userTypeProvider
-				.GetUserTypesAsync(cancellationToken));
+			return Ok(fromDatabase
+				? await _userTypeProvider.GetUserTypesAsync(cancellationToken)
+				: await _fileUserTypeProvider.GetUserTypesAsync(cancellationToken));
 		}
 	}
 }

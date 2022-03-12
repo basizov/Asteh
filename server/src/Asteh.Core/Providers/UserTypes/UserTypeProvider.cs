@@ -4,7 +4,7 @@ using AutoMapper;
 
 namespace Asteh.Core.Providers.UserTypes
 {
-	public class UserTypeProvider : IUserTypeProvider
+	public class UserTypeProvider : IUserTypeProvider<UserTypeProvider>
 	{
 		private readonly IMapper _mapper;
 		private readonly IUnitOfWork _unitOfWork;

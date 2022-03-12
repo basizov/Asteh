@@ -4,8 +4,10 @@ using Asteh.Api.Examples.Users;
 using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
 using Asteh.Core.Providers.Users;
+using Asteh.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Filters;
+using System.Net;
 
 namespace Asteh.Api.Controllers
 {
@@ -39,8 +41,6 @@ namespace Asteh.Api.Controllers
 			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			//await Task.Delay(5000);
 			return Ok(fromDatabase
 				? await _userProvider.GetUsersAsync(cancellationToken)
 				: await _fileUserProvider.GetUsersAsync(cancellationToken));
@@ -66,8 +66,6 @@ namespace Asteh.Api.Controllers
 			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			//await Task.Delay(5000);
 			try
 			{
 				return Ok(fromDatabase
@@ -76,7 +74,7 @@ namespace Asteh.Api.Controllers
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(GetApplicationError(ex.Message));
 			}
 		}
 
@@ -100,8 +98,7 @@ namespace Asteh.Api.Controllers
 			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			//await Task.Delay(5000);
+			await Task.Delay(5000, cancellationToken);
 			try
 			{
 				return Ok(fromDatabase
@@ -110,7 +107,7 @@ namespace Asteh.Api.Controllers
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(GetApplicationError(ex.Message));
 			}
 		}
 
@@ -135,8 +132,6 @@ namespace Asteh.Api.Controllers
 			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			//await Task.Delay(5000);
 			try
 			{
 				var a = nameof(GetUserByIdAsync);
@@ -150,7 +145,7 @@ namespace Asteh.Api.Controllers
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(GetApplicationError(ex.Message));
 			}
 		}
 
@@ -176,8 +171,6 @@ namespace Asteh.Api.Controllers
 			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			//await Task.Delay(5000);
 			try
 			{
 				if (fromDatabase)
@@ -189,7 +182,7 @@ namespace Asteh.Api.Controllers
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(GetApplicationError(ex.Message));
 			}
 		}
 
@@ -213,8 +206,6 @@ namespace Asteh.Api.Controllers
 			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
-			// TODO: Just for testing!
-			//await Task.Delay(5000);
 			try
 			{
 				if (fromDatabase)
@@ -226,8 +217,14 @@ namespace Asteh.Api.Controllers
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(ex.Message);
+				return BadRequest(GetApplicationError(ex.Message));
 			}
 		}
+
+		private static ApplicationError GetApplicationError(string message) => new()
+		{
+			Message = message,
+			StatusCode = HttpStatusCode.BadRequest
+		};
 	}
 }

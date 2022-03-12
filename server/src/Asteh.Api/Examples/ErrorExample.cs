@@ -1,10 +1,15 @@
-﻿using Swashbuckle.AspNetCore.Filters;
+﻿using Asteh.Domain.Entities;
+using Swashbuckle.AspNetCore.Filters;
+using System.Net;
 
 namespace Asteh.Api.Examples
 {
-	public class ErrorExample : IExamplesProvider<string>
+	public class ErrorExample : IExamplesProvider<ApplicationError>
 	{
-		// TODO: Add error entity
-		public string GetExamples() => "Error!!";
+		public ApplicationError GetExamples() => new()
+		{
+			Message = "Error message from Exception.Message",
+			StatusCode = HttpStatusCode.InternalServerError
+		};
 	}
 }

@@ -30,7 +30,7 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(FullInfoExample))]
 		public async Task<ActionResult<FullInfoModel>> GetFullNeccessaryInfoAsync(
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken = default)
 		{
 			var fullInfo = await _authorizeService
 				.GetFullInfoModelToAuthorizeUser(cancellationToken);
@@ -57,9 +57,10 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(FullInfoExample))]
+		[SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(string))]
 		public async Task<ActionResult<FullInfoModel>> AuthorizeUserAsync(
 			AuthorizeModel authorizeModel,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken = default)
 		{
 			var fullInfo = await _authorizeService.AuthorizeUserAsync(
 				authorizeModel, cancellationToken);
