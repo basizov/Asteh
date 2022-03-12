@@ -1,9 +1,9 @@
-﻿using Asteh.Core.Models;
+﻿using Asteh.Api.Examples;
+using Asteh.Core.Helpers;
+using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
 using Asteh.Core.Services.Authorize;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Asteh.Api.Examples;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Asteh.Api.Controllers
@@ -29,11 +29,19 @@ namespace Asteh.Api.Controllers
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(FullInfoExample))]
-		public async Task<ActionResult<FullInfoModel>> AuthorizeUserAsync(
+		public async Task<ActionResult<FullInfoModel>> GetFullNeccessaryInfoAsync(
 			CancellationToken cancellationToken)
 		{
-			return Ok(await _authorizeService
-				.GetFullInfoModelToAuthorizeUser(cancellationToken));
+			var fullInfo = await _authorizeService
+				.GetFullInfoModelToAuthorizeUser(cancellationToken);
+
+			var allowAcces = Request.Cookies[Constants.CookieAllowAccessTab];
+			if (allowAcces is not null &&
+				allowAcces.Equals(Constants.AllowIndicator))
+			{
+				fullInfo.IsAccessEnabled = true;
+			}
+			return Ok();
 		}
 
 		/// <summary>
@@ -59,6 +67,19 @@ namespace Asteh.Api.Controllers
 			{
 				return NotFound($"Invalid user credentials");
 			}
+
+			var cookieOptions = new CookieOptions
+			{
+				HttpOnly = true,
+				Expires = DateTime.UtcNow.AddDays(7)
+			};
+			Response.Cookies.Append(
+				Constants.CookieAllowAccessTab,
+				fullInfo.IsAccessEnabled
+					? Constants.AllowIndicator
+					: Constants.NoAllowIndicator,
+				cookieOptions);
+
 			return Ok(fullInfo);
 		}
 	}

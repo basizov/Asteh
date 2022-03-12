@@ -5,7 +5,7 @@ using AutoMapper;
 
 namespace Asteh.Core.Services.Authorize
 {
-	internal class AuthorizeService : IAuthorizeService
+	public class AuthorizeService : IAuthorizeService
 	{
 		private readonly IMapper _mapper;
 		private readonly IUnitOfWork _unitOfWork;
@@ -18,7 +18,7 @@ namespace Asteh.Core.Services.Authorize
 
 		public async Task<FullInfoModel?> AuthorizeUserAsync(
 			AuthorizeModel authorizeModel,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken = default)
 		{
 			var user = await _unitOfWork.UserRepository
 				.SingleOrDefaultAsync(d => d.Login.Equals(authorizeModel.Login));
@@ -36,18 +36,20 @@ namespace Asteh.Core.Services.Authorize
 			return new()
 			{
 				UserId = user.Id,
+				IsAccessEnabled = user.Type?.AllowEdit ?? false,
 				Users = users,
 				UserTypes = userTypes
 			};
 		}
 
 		public async Task<FullInfoModel> GetFullInfoModelToAuthorizeUser(
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken = default)
 		{
 			var (users, userTypes) = await GetUserAndUserTypesAsync(cancellationToken);
 			return new()
 			{
 				UserId = 0,
+				IsAccessEnabled = false,
 				Users = users,
 				UserTypes = userTypes
 			};

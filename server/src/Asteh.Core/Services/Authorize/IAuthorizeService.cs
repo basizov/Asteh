@@ -7,8 +7,8 @@ namespace Asteh.Core.Services.Authorize
 	{
 		Task<FullInfoModel?> AuthorizeUserAsync(
 			AuthorizeModel authorizeModel,
-			CancellationToken cancellationToken);
+			CancellationToken cancellationToken = default);
 		Task<FullInfoModel> GetFullInfoModelToAuthorizeUser(
-			CancellationToken cancellationToken);
+			CancellationToken cancellationToken = default);
 	}
 }

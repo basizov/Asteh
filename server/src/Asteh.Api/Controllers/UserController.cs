@@ -1,4 +1,5 @@
-﻿using Asteh.Api.Examples;
+﻿using Asteh.Api.Attributes;
+using Asteh.Api.Examples;
 using Asteh.Api.Examples.Users;
 using Asteh.Core.Models;
 using Asteh.Core.Models.RequestModels;
@@ -128,6 +129,7 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status201Created, typeof(GetUserResponseExample))]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
+		[AutorizeAttrubite]
 		public async Task<ActionResult<UserModel>> CreateUserAsync(
 			[FromBody] UserCreateModel createModel,
 			[FromQuery] bool fromDatabase = true,
@@ -167,6 +169,7 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
+		[AutorizeAttrubite]
 		public async Task<ActionResult<UserModel>> UpdateUserAsync(
 			[FromRoute] int id,
 			[FromBody] UserUpdateModel updateModel,
@@ -204,6 +207,7 @@ namespace Asteh.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
+		[AutorizeAttrubite]
 		public async Task<ActionResult<UserModel>> DeleteUserAsync(
 			int id,
 			[FromQuery] bool fromDatabase = true,

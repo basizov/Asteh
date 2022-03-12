@@ -9,6 +9,12 @@ namespace Asteh.Core.Models
 		/// </summary>
 		public int? UserId { get; set; }
 		/// <summary>
+		/// Flag that indecates user to have permissions for
+		/// Create, Update and Delete users accounts
+		/// </summary>
+		[Required]
+		public bool IsAccessEnabled { get; set; }
+		/// <summary>
 		/// All users in the app;ication
 		/// </summary>
 		[Required]
