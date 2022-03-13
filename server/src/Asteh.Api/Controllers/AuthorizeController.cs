@@ -71,6 +71,7 @@ namespace Asteh.Api.Controllers
 			[FromQuery] bool fromDatabase = true,
 			CancellationToken cancellationToken = default)
 		{
+			var allowAcces = Request.Cookies[Constants.CookieAllowAccessTab];
 			var fullInfo = fromDatabase
 				? await _authorizeService.AuthorizeUserAsync(authorizeModel, cancellationToken)
 				: await _fileAuthorizeService.AuthorizeUserAsync(authorizeModel, cancellationToken);
@@ -82,6 +83,8 @@ namespace Asteh.Api.Controllers
 			var cookieOptions = new CookieOptions
 			{
 				HttpOnly = true,
+				Path = "/",
+				MaxAge = TimeSpan.FromDays(7),
 				Expires = DateTime.UtcNow.AddDays(7)
 			};
 			Response.Cookies.Append(

@@ -1,18 +1,19 @@
 import { InferActionType } from "..";
-import { FullInfo } from "../../api/models/FullInfo";
 
 const initialState = {
   loading: false,
   loadingInitial: false,
   userId: 0,
-  isAccessEnabled: false
+  isAccessEnabled: false,
+  from: true
 };
 
 enum AuthorizeActionTypes {
   SET_LOADING = 'AUTHORIZE_SET_LOADING',
   SET_LOADING_INITIAL = 'AUTHORIZE_SET_LOADING_INITIAL',
   SET_USER_ID = 'AUTHORIZE_SET_USER_ID',
-  SET_IS_ACCESS_ENABLED = 'AUTHORIZE_SET_IS_ACCESS_ENABLED'
+  SET_IS_ACCESS_ENABLED = 'AUTHORIZE_SET_IS_ACCESS_ENABLED',
+  SET_FROM = 'AUTHORIZE_SET_FROM'
 };
 
 export const authorizeReducer = (state = initialState, action: AuthorizeAction) => {
@@ -25,6 +26,8 @@ export const authorizeReducer = (state = initialState, action: AuthorizeAction) 
       return {...state, userId: action.payload};
     case AuthorizeActionTypes.SET_IS_ACCESS_ENABLED:
       return {...state, isAccessEnabled: action.payload};
+    case AuthorizeActionTypes.SET_FROM:
+      return {...state, from: action.payload};
     default:
       return {...state};
   }
@@ -47,6 +50,10 @@ export const authorizeActions = {
   }) as const,
   setIsAccessEnabled: (payload: boolean) => ({
     type: AuthorizeActionTypes.SET_IS_ACCESS_ENABLED,
+    payload
+  }) as const,
+  setFrom: (payload: boolean) => ({
+    type: AuthorizeActionTypes.SET_FROM,
     payload
   }) as const
 };

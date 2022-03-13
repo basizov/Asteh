@@ -7,11 +7,13 @@ import { object, string } from "yup";
 import { SchemaOptions } from "yup/lib/schema";
 import { AuthorizeModel } from "../api/models/request/AuthorizeModel";
 import { StyledPaper } from "../components/Styled/StyledPaper";
+import { useTypedSelector } from "../hooks/useTypedSelector";
 import { authorizeUserAsync } from "../store/authorizeStore/asyncActions";
 
 export const AuthorizetionPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {from} = useTypedSelector(s => s.authorization);
   const initialState = useMemo(() => ({
     login: '',
     password: ''
@@ -26,7 +28,7 @@ export const AuthorizetionPage: React.FC = () => {
       initialValues={initialState}
       validationSchema={validationSchema}
       onSubmit={async values => {
-        await dispatch(authorizeUserAsync(values));
+        await dispatch(authorizeUserAsync(values, from));
         navigate('/');
       }}
     >

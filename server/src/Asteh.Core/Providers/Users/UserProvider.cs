@@ -4,6 +4,7 @@ using Asteh.Core.Models.RequestModels;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Asteh.Core.Providers.Users
 {
@@ -60,10 +61,10 @@ namespace Asteh.Core.Providers.Users
 			var filterType = filter.TypeName;
 			var filterUsers = await _unitOfWork.UserRepository.FindByAsync(d =>
 				(filterName == null || d.Name.Equals(filterName)) &&
-				(filterType == null || d.Type!.Name.Equals(filterType)) &&
+				(filterType == null || d.Type!.Name.Equals(filterType)), cancellationToken);
+			return _mapper.Map<IEnumerable<UserModel>>(filterUsers.Where(d =>
 				(beginDate == null || d.LastVisitDate >= beginDate) &&
-				(endDate == null || d.LastVisitDate <= endDate), cancellationToken);
-			return _mapper.Map<IEnumerable<UserModel>>(filterUsers);
+				(endDate == null || d.LastVisitDate <= endDate)));
 		}
 
 		public async Task<int> CreateUserAsync(

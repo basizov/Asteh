@@ -68,6 +68,11 @@ namespace Asteh.Core.Services.Authorize
 		{
 			var users = await DeserializeUsersAsync(cancellationToken);
 			var userTypes = await DeserializeUserTypesAsync(cancellationToken);
+			foreach (var userEntity in users)
+			{
+				userEntity.Type = userTypes
+					.SingleOrDefault(d => d.Id == userEntity.TypeId);
+			}
 
 			var	userModels = _mapper.Map<IEnumerable<UserModel>>(users);
 			var	userTypeModels = _mapper.Map<IEnumerable<UserTypeModel>>(userTypes);

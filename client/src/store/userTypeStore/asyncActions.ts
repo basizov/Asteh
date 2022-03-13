@@ -10,11 +10,11 @@ type AsyncThunkType = ThunkAction<
   UserTypeAction
 >;
 
-export const getUserTypesAsync = (): AsyncThunkType => {
+export const getUserTypesAsync = (fromDatabase = true): AsyncThunkType => {
   return async dispatch => {
     dispatch(userTypeActions.setLoading(true));
     try {
-      const response = await API.USER_TYPES.getUserTypes();
+      const response = await API(fromDatabase).USER_TYPES.getUserTypes();
       if (response) {
         dispatch(userTypeActions.setUserTypes(response));
       }

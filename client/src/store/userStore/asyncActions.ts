@@ -13,11 +13,11 @@ type AsyncThunkType = ThunkAction<
   UserAction
 >;
 
-export const getUsersAsync = (): AsyncThunkType => {
+export const getUsersAsync = (fromDatabase = true): AsyncThunkType => {
   return async dispatch => {
     dispatch(userActions.setLoading(true));
     try {
-      const response = await API.USERS.getUsers();
+      const response = await API(fromDatabase).USERS.getUsers();
       if (response) {
         dispatch(userActions.setUsers(response));
       }
@@ -29,11 +29,14 @@ export const getUsersAsync = (): AsyncThunkType => {
   };
 };
 
-export const getUserByIdAsync = (id: number): AsyncThunkType => {
+export const getUserByIdAsync = (
+  id: number,
+  fromDatabase = true
+): AsyncThunkType => {
   return async dispatch => {
     dispatch(userActions.setLoading(true));
     try {
-      const response = await API.USERS.getUserById(id);
+      const response = await API(fromDatabase).USERS.getUserById(id);
       if (response) {
         dispatch(userActions.setSelectedUser(response));
       }
@@ -46,7 +49,8 @@ export const getUserByIdAsync = (id: number): AsyncThunkType => {
 };
 
 export const filterUsersAsync = (
-  payload: FilterModel
+  payload: FilterModel,
+  fromDatabase = true
 ): AsyncThunkType => {
   return async dispatch => {
     dispatch(userActions.setLoading(true));
@@ -57,9 +61,9 @@ export const filterUsersAsync = (
       params.append('beginDate', payload.beginDate || '');
       params.append('endDate', payload.endDate || '');
 
-      const response = await API.USERS.filterUsers(params);
+      const response = await API(fromDatabase).USERS.filterUsers(params);
       if (response) {
-        dispatch(userActions.setSelectedUser(response));
+        dispatch(userActions.setUsers(response));
       }
     } catch (e) {
       console.log(e);
@@ -70,14 +74,15 @@ export const filterUsersAsync = (
 };
 
 export const createUserAsync = (
-  payload: CreateUserModel
+  payload: CreateUserModel,
+  fromDatabase = true
 ): AsyncThunkType => {
   return async dispatch => {
     dispatch(userActions.setLoading(true));
     try {
-      const response = await API.USERS.createUser(payload);
+      const response = await API(fromDatabase).USERS.createUser(payload);
       if (response) {
-        dispatch(userActions.addUser(response));
+        await dispatch(getUsersAsync());
       }
     } catch (e) {
       console.log(e);
@@ -89,14 +94,15 @@ export const createUserAsync = (
 
 export const updateUserAsync = (
   id: number,
-  payload: UpdateUserModel
+  payload: UpdateUserModel,
+  fromDatabase = true
 ): AsyncThunkType => {
   return async dispatch => {
     dispatch(userActions.setLoading(true));
     try {
-      const response = await API.USERS.updateUser(id, payload);
+      const response = await API(fromDatabase).USERS.updateUser(id, payload);
       if (response) {
-        getUsersAsync();
+        await dispatch(getUsersAsync());
       }
     } catch (e) {
       console.log(e);
@@ -106,13 +112,16 @@ export const updateUserAsync = (
   };
 };
 
-export const deleteUserAsync = (id: number): AsyncThunkType => {
+export const deleteUserAsync = (
+  id: number,
+  fromDatabase = true
+): AsyncThunkType => {
   return async dispatch => {
     dispatch(userActions.setLoading(true));
     try {
-      const response = await API.USERS.deleteUser(id);
+      const response = await API(fromDatabase).USERS.deleteUser(id);
       if (response) {
-        getUsersAsync();
+        await dispatch(getUsersAsync());
       }
     } catch (e) {
       console.log(e);

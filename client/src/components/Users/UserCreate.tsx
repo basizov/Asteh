@@ -26,13 +26,14 @@ export const UserCreate : React.FC<PropsType> = ({closeModal}) => {
     typeName: string().required(),
     password: string().required()
   }), []);
+  const {from} = useTypedSelector(s => s.authorization);
   const {userTypes} = useTypedSelector(s => s.userTypes);
   
   return <Formik
     initialValues={intialCreatedUserState}
     validationSchema={validationSchema}
     onSubmit={async values => {
-      await dispatch(createUserAsync(values));
+      await dispatch(createUserAsync(values, from));
       closeModal();
     }}
   >

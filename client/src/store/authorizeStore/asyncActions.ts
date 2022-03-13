@@ -13,11 +13,11 @@ type AsyncThunkType = ThunkAction<
   AuthorizeAction | UserAction | UserTypeAction
 >;
 
-export const getFullInfoAsync = (): AsyncThunkType => {
+export const getFullInfoAsync = (fromDatabase = true): AsyncThunkType => {
   return async dispatch => {
     dispatch(authorizeActions.setLoadingInitial(true));
     try {
-      const response = await API.AUTHORIZATION.getFullInfo();
+      const response = await API(fromDatabase).AUTHORIZATION.getFullInfo();
       if (response) {
         dispatch(authorizeActions.setUserId(response.userId));
         dispatch(authorizeActions.setIsAccessEnabled(response.isAccessEnabled));
@@ -33,12 +33,13 @@ export const getFullInfoAsync = (): AsyncThunkType => {
 };
 
 export const authorizeUserAsync = (
-  payload: AuthorizeModel
+  payload: AuthorizeModel,
+  fromDatabase = true
 ): AsyncThunkType => {
   return async dispatch => {
     dispatch(authorizeActions.setLoading(true));
     try {
-      const response = await API.AUTHORIZATION.login(payload);
+      const response = await API(fromDatabase).AUTHORIZATION.login(payload);
       if (response) {
         dispatch(authorizeActions.setUserId(response.userId));
         dispatch(authorizeActions.setIsAccessEnabled(response.isAccessEnabled));

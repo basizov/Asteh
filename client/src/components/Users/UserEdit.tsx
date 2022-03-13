@@ -25,6 +25,7 @@ export const UserEdit : React.FC = () => {
     typeName: selectedUser?.typeName || '',
     lastVisitDate: selectedUser?.lastVisitDate || ''
   } as UpdateUserModel), []);
+  const {from} = useTypedSelector(s => s.authorization);
   if (selectedUser === null) {
     return <Typography
       variant="caption"
@@ -36,7 +37,7 @@ export const UserEdit : React.FC = () => {
     initialValues={intialCreatedUserState}
     validationSchema={validationSchema}
     onSubmit={async values => {
-      await dispatch(updateUserAsync(selectedUser.id, values));
+      await dispatch(updateUserAsync(selectedUser.id, values, from));
     }}
   >
     {({

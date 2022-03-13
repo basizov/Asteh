@@ -1,6 +1,5 @@
 import { Avatar, Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { green, red } from "@mui/material/colors";
-import { fontWeight } from "@mui/system";
 import { useTypedSelector } from "../../hooks/useTypedSelector";
 
 export const UserDetails : React.FC = () => {
