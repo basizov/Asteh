@@ -169,7 +169,10 @@ namespace Asteh.Core.UnitTests
 			var filteredUsers = await _sut.FindUsersAsync(filter);
 
 			// Assert
-			filteredUsers.Should().BeEquivalentTo(filteredUsersModelsResult);
+			filteredUsers.Should()
+				.BeEquivalentTo(filteredUsersModelsResult
+					.Where(d => DateTime.Parse(d.LastVisitDate) >= DateTime.Parse(filter.BeginDate!)! &&
+								DateTime.Parse(d.LastVisitDate) <= DateTime.Parse(filter.EndDate!)!));
 		}
 
 		[Fact]

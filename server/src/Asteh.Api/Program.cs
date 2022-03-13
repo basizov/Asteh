@@ -41,8 +41,11 @@ await app.SeedUsersAsync(dataSettings.FileSerializerString);
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseCors("CorsPolicy");
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
 
 await app.RunAsync();
 

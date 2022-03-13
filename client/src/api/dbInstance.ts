@@ -4,7 +4,7 @@ const paramsDatabase =  new URLSearchParams();
 paramsDatabase.append('fromDatabase', 'true');
 
 export const dbInstance = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: process.env.REACT_APP_API_URL,
   params: paramsDatabase,
   withCredentials: true
 });
