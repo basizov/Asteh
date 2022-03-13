@@ -181,7 +181,10 @@ namespace Asteh.Api.Controllers
 				{
 					await _userProvider.UpdateUserAsync(id, updateModel, cancellationToken);
 				}
-				await _fileUserProvider.UpdateUserAsync(id, updateModel, cancellationToken);
+				else
+				{
+					await _fileUserProvider.UpdateUserAsync(id, updateModel, cancellationToken);
+				}
 				return NoContent();
 			}
 			catch (ArgumentException ex)
@@ -218,7 +221,10 @@ namespace Asteh.Api.Controllers
 				{
 					await _userProvider.DeleteUserAsync(id, cancellationToken);
 				}
-				await _fileUserProvider.DeleteUserAsync(id, cancellationToken);
+				else
+				{
+					await _fileUserProvider.DeleteUserAsync(id, cancellationToken);
+				}
 				return NoContent();
 			}
 			catch (ArgumentException ex)

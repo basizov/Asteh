@@ -82,7 +82,7 @@ export const createUserAsync = (
     try {
       const response = await API(fromDatabase).USERS.createUser(payload);
       if (response) {
-        await dispatch(getUsersAsync());
+        await dispatch(getUsersAsync(fromDatabase));
       }
     } catch (e) {
       console.log(e);
@@ -100,10 +100,8 @@ export const updateUserAsync = (
   return async dispatch => {
     dispatch(userActions.setLoading(true));
     try {
-      const response = await API(fromDatabase).USERS.updateUser(id, payload);
-      if (response) {
-        await dispatch(getUsersAsync());
-      }
+      await API(fromDatabase).USERS.updateUser(id, payload);
+      await dispatch(getUsersAsync(fromDatabase));
     } catch (e) {
       console.log(e);
     } finally {
@@ -119,10 +117,8 @@ export const deleteUserAsync = (
   return async dispatch => {
     dispatch(userActions.setLoading(true));
     try {
-      const response = await API(fromDatabase).USERS.deleteUser(id);
-      if (response) {
-        await dispatch(getUsersAsync());
-      }
+      await API(fromDatabase).USERS.deleteUser(id);
+      await dispatch(getUsersAsync(fromDatabase));
     } catch (e) {
       console.log(e);
     } finally {

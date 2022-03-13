@@ -41,6 +41,9 @@ export const UsersPage: React.FC = () => {
   const handleCloseCreateModal = useCallback(() => {
     setShowCreateModal(false);
   }, []);
+  const handleCloseEditModal = useCallback(() => {
+    setShowEditModal(false);
+  }, []);
 
   useEffect(() => {
     setFromWhere(from ? 'database' : 'file');
@@ -131,8 +134,8 @@ export const UsersPage: React.FC = () => {
     ><UserDetails/></ModalHOC>
     <ModalHOC
       openFlag={showEditModal}
-      closeModal={() => setShowEditModal(false)}
-    ><UserEdit/></ModalHOC>
+      closeModal={handleCloseEditModal}
+    ><UserEdit closeModal={handleCloseEditModal}/></ModalHOC>
     <ModalHOC
       openFlag={showCreateModal}
       closeModal={handleCloseCreateModal}
