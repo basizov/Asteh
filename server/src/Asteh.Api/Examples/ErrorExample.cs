@@ -6,10 +6,7 @@ namespace Asteh.Api.Examples
 {
 	public class ErrorExample : IExamplesProvider<ApplicationError>
 	{
-		public ApplicationError GetExamples() => new()
-		{
-			Message = "Error message from Exception.Message",
-			StatusCode = HttpStatusCode.InternalServerError
-		};
+		public ApplicationError GetExamples() =>
+			new("Error message from Exception.Message", HttpStatusCode.InternalServerError);
 	}
 }

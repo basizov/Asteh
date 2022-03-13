@@ -25,6 +25,14 @@ var dataSettings = new DataSettings(
     Path.Combine(Environment.CurrentDirectory, "Serializing"));
 builder.Services.AddDomainSystem(dataSettings);
 
+
+builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", policy => policy
+    .WithOrigins("http://localhost:3000")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+));
+
 builder.Services.AddCoreSystem();
 
 var app = builder.Build();
@@ -33,6 +41,7 @@ await app.SeedUsersAsync(dataSettings.FileSerializerString);
 app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors("CorsPolicy");
 app.MapControllers();
 
 await app.RunAsync();

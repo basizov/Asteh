@@ -1,6 +1,8 @@
 ﻿using Asteh.Core.Helpers;
+using Asteh.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Net;
 
 namespace Asteh.Api.Attributes
 {
@@ -14,7 +16,13 @@ namespace Asteh.Api.Attributes
 			if (!(allowAcces is not null &&
 				allowAcces.Equals(Constants.AllowIndicator)))
 			{
-				context.Result = new ForbidResult();
+				var unauthorizedSC = HttpStatusCode.Unauthorized;
+				var result = new ObjectResult(new ApplicationError(
+					"Don't have neccessary permissions", unauthorizedSC))
+				{
+					StatusCode = (int)unauthorizedSC
+				};
+				context.Result = result;
 			}
 		}
 	}

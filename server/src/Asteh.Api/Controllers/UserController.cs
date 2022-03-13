@@ -120,12 +120,14 @@ namespace Asteh.Api.Controllers
 		/// <returns>Created user</returns>
 		/// <response code="201">Successfully create user</response>
 		/// <response code="400">Some error during creating</response>
+		/// <response code="401">User don't have allow_edit=true in type</response>
 		[HttpPost]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status201Created, typeof(GetUserResponseExample))]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
+		[SwaggerResponseExample(StatusCodes.Status401Unauthorized, typeof(ErrorExample))]
 		[AutorizeAttrubite]
 		public async Task<ActionResult<UserModel>> CreateUserAsync(
 			[FromBody] UserCreateModel createModel,
@@ -159,11 +161,13 @@ namespace Asteh.Api.Controllers
 		/// <returns>No content</returns>
 		/// <response code="204">Successfully updated user</response>response>
 		/// <response code="400">Some error during updating</response>response>
+		/// <response code="401">User don't have allow_edit=true in type</response>
 		[HttpPut("{id:int}")]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
+		[SwaggerResponseExample(StatusCodes.Status401Unauthorized, typeof(ErrorExample))]
 		[AutorizeAttrubite]
 		public async Task<ActionResult<UserModel>> UpdateUserAsync(
 			[FromRoute] int id,
@@ -195,11 +199,13 @@ namespace Asteh.Api.Controllers
 		/// <returns>No content</returns>
 		/// <response code="204">Successfully deleted user</response>response>
 		/// <response code="400">Some error during deleting</response>response>
+		/// <response code="401">User don't have allow_edit=true in type</response>
 		[HttpDelete("{id:int}")]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
+		[SwaggerResponseExample(StatusCodes.Status401Unauthorized, typeof(ErrorExample))]
 		[AutorizeAttrubite]
 		public async Task<ActionResult<UserModel>> DeleteUserAsync(
 			int id,
@@ -221,10 +227,7 @@ namespace Asteh.Api.Controllers
 			}
 		}
 
-		private static ApplicationError GetApplicationError(string message) => new()
-		{
-			Message = message,
-			StatusCode = HttpStatusCode.BadRequest
-		};
+		private static ApplicationError GetApplicationError(string message) =>
+			new(message, HttpStatusCode.BadRequest);
 	}
 }

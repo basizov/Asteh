@@ -26,11 +26,7 @@ namespace Asteh.Api.Middlewares
 				var statusCode = HttpStatusCode.InternalServerError;
 				context.Response.StatusCode = (int)statusCode;
 
-				var response = new ApplicationError
-				{
-					Message = ex.Message,
-					StatusCode = statusCode
-				};
+				var response = new ApplicationError(ex.Message, statusCode);
 				await context.Response.WriteAsync(
 					JsonSerializer.Serialize(response));
 			}
