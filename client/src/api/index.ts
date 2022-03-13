@@ -9,8 +9,8 @@ import { User } from "./models/User";
 import { UserType } from "./models/UserType";
 
 enum Paths {
-  USERS = '/Users',
-  FILTER_USERS = '/Users/find',
+  USERS = '/User',
+  FILTER_USERS = '/User/find',
   USER_TYPES = '/UserType',
   AUTHORIZE = '/Authorize'
 };

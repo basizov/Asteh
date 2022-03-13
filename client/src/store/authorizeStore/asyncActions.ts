@@ -3,12 +3,14 @@ import { AuthorizeAction, authorizeActions } from ".";
 import { RootState } from "..";
 import { API } from "../../api";
 import { AuthorizeModel } from "../../api/models/request/AuthorizeModel";
+import { UserAction, userActions } from "../userStore";
+import { UserTypeAction, userTypeActions } from "../userTypeStore";
 
 type AsyncThunkType = ThunkAction<
   Promise<void>,
   RootState,
   unknown,
-  AuthorizeAction
+  AuthorizeAction | UserAction | UserTypeAction
 >;
 
 export const getFullInfoAsync = (): AsyncThunkType => {
@@ -17,7 +19,10 @@ export const getFullInfoAsync = (): AsyncThunkType => {
     try {
       const response = await API.AUTHORIZATION.getFullInfo();
       if (response) {
-        dispatch(authorizeActions.setFullInfo(response));
+        dispatch(authorizeActions.setUserId(response.userId));
+        dispatch(authorizeActions.setIsAccessEnabled(response.isAccessEnabled));
+        dispatch(userActions.setUsers(response.users));
+        dispatch(userTypeActions.setUserTypes(response.userTypes));
       }
     } catch (e) {
       console.log(e);
@@ -35,7 +40,10 @@ export const authorizeUserAsync = (
     try {
       const response = await API.AUTHORIZATION.login(payload);
       if (response) {
-        dispatch(authorizeActions.setFullInfo(response));
+        dispatch(authorizeActions.setUserId(response.userId));
+        dispatch(authorizeActions.setIsAccessEnabled(response.isAccessEnabled));
+        dispatch(userActions.setUsers(response.users));
+        dispatch(userTypeActions.setUserTypes(response.userTypes));
       }
     } catch (e) {
       console.log(e);
