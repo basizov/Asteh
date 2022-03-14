@@ -11,6 +11,10 @@ namespace Asteh.Api.IntegrationTests
 {
 	public class UserTypeControllerTests : BaseControllerTests
 	{
+		public UserTypeControllerTests() : base("userTypes")
+		{
+		}
+
 		[Fact]
 		public async Task GivenNothing_WhenGetUserTypesAsyncIsCalled_ThenReturnSeedUserTypes()
 		{

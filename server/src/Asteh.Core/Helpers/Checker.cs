@@ -29,8 +29,7 @@ namespace Asteh.Core.Helpers
 				.TryParse(filter.BeginDate, out var beginDate) || isBeginDateNullOrEmpty;
 			var isCorrectEndDate = DateTime
 				.TryParse(filter.EndDate, out var endDate) || isEndDateNullOrEmpty;
-			if (!(isCorrectBeginDate && isCorrectEndDate &&
-				(beginDate < endDate || isBeginDateNullOrEmpty || isEndDateNullOrEmpty)))
+			if (!isCorrectBeginDate || !isCorrectEndDate)
 			{
 				return (false,
 					isCorrectBeginDate ? beginDate : null,

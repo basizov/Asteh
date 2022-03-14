@@ -4,7 +4,6 @@ using Asteh.Core.Models.RequestModels;
 using Asteh.Domain.Entities;
 using Asteh.Domain.Repositories.Base;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace Asteh.Core.Providers.Users
 {

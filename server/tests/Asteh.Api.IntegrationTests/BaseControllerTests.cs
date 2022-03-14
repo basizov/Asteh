@@ -12,7 +12,7 @@ namespace Asteh.Api.IntegrationTests
 	{
 		protected readonly HttpClient Client;
 
-		protected BaseControllerTests()
+		protected BaseControllerTests(string testDatabaseName)
 		{
 			var appFactory = new WebApplicationFactory<Program>()
 				.WithWebHostBuilder(builder =>
@@ -24,7 +24,7 @@ namespace Asteh.Api.IntegrationTests
 						services.Remove(descriptor!);
 
 						services.AddDbContext<ApplicationDbContext>(options =>
-							options.UseInMemoryDatabase("asteh-db"));
+							options.UseInMemoryDatabase($"asteh-db-{testDatabaseName}"));
 					});
 				});
 			Client = appFactory.CreateClient();

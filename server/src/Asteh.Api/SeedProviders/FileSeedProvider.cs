@@ -22,7 +22,7 @@ namespace Asteh.Api.SeedProviders
 				await dbContext.Database.MigrateAsync();
 			}
 
-			if (!dbContext.UserTypes.Any() && !dbContext.Users.Any())
+			if (!(dbContext.UserTypes.Any() || dbContext.Users.Any()))
 			{
 				var serializerOptions = new JsonSerializerOptions
 				{

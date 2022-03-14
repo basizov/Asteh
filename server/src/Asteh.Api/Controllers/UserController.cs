@@ -8,6 +8,7 @@ using Asteh.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Filters;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace Asteh.Api.Controllers
 {
@@ -58,9 +59,9 @@ namespace Asteh.Api.Controllers
 		[HttpGet("{id:int}")]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ApplicationError), StatusCodes.Status404NotFound)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(GetUserResponseExample))]
-		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
+		[SwaggerResponseExample(StatusCodes.Status404NotFound, typeof(ErrorExample))]
 		public async Task<ActionResult<IEnumerable<UserModel>>> GetUserByIdAsync(
 			int id,
 			[FromQuery] bool fromDatabase = true,
@@ -74,7 +75,7 @@ namespace Asteh.Api.Controllers
 			}
 			catch (ArgumentException ex)
 			{
-				return BadRequest(GetApplicationError(ex.Message));
+				return NotFound(GetApplicationError(ex.Message));
 			}
 		}
 
@@ -90,7 +91,7 @@ namespace Asteh.Api.Controllers
 		[HttpGet("find")]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ApplicationError), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status200OK, typeof(GetUsersResponseExample))]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		public async Task<ActionResult<IEnumerable<UserModel>>> FindUsersAsync(
@@ -101,9 +102,10 @@ namespace Asteh.Api.Controllers
 			await Task.Delay(5000, cancellationToken);
 			try
 			{
-				return Ok(fromDatabase
+				var res = fromDatabase
 					? await _userProvider.FindUsersAsync(filter, cancellationToken)
-					: await _fileUserProvider.FindUsersAsync(filter, cancellationToken));
+					: await _fileUserProvider.FindUsersAsync(filter, cancellationToken);
+				return Ok(res);
 			}
 			catch (ArgumentException ex)
 			{
@@ -124,7 +126,7 @@ namespace Asteh.Api.Controllers
 		[HttpPost]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
-		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ApplicationError), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status201Created, typeof(GetUserResponseExample))]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		[SwaggerResponseExample(StatusCodes.Status401Unauthorized, typeof(ErrorExample))]
@@ -165,7 +167,7 @@ namespace Asteh.Api.Controllers
 		[HttpPut("{id:int}")]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ApplicationError), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		[SwaggerResponseExample(StatusCodes.Status401Unauthorized, typeof(ErrorExample))]
 		[AutorizeAttrubite]
@@ -206,7 +208,7 @@ namespace Asteh.Api.Controllers
 		[HttpDelete("{id:int}")]
 		[Produces("application/json")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(ApplicationError), StatusCodes.Status400BadRequest)]
 		[SwaggerResponseExample(StatusCodes.Status400BadRequest, typeof(ErrorExample))]
 		[SwaggerResponseExample(StatusCodes.Status401Unauthorized, typeof(ErrorExample))]
 		[AutorizeAttrubite]
