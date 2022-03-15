@@ -6,6 +6,7 @@ using System.Net;
 
 namespace Asteh.Api.Attributes
 {
+	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
 	public class AutorizeAttrubite : Attribute, IAuthorizationFilter
 	{
 		public void OnAuthorization(AuthorizationFilterContext context)
