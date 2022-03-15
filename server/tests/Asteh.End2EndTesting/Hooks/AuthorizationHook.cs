@@ -8,25 +8,18 @@ namespace Asteh.End2EndTesting.Hooks
 	[Binding]
 	public class AuthorizationHook
 	{
-		[BeforeScenario("Authorization")]
-		public async Task BeforeAuthorizationScenarioAsync(IObjectContainer container)
+		private readonly IBrowser _browser;
+
+		public AuthorizationHook(IBrowser browser)
 		{
-			var playwright = await Playwright.CreateAsync();
-			var browser = await playwright.Chromium.LaunchAsync();
-			var pageObject = new AuthorizationPageObject(browser);
-			container.RegisterInstanceAs(playwright);
-			container.RegisterInstanceAs(browser);
-			container.RegisterInstanceAs(pageObject);
+			_browser = browser;
 		}
 
-		[AfterScenario]
-		public async Task AfterScenarioAsync(IObjectContainer container)
+		[BeforeScenario("Authorization")]
+		public void BeforeAuthorizationScenarioAsync(IObjectContainer container)
 		{
-			var browser = container.Resolve<IBrowser>();
-			await browser.CloseAsync();
-
-			var playwright = container.Resolve<IPlaywright>();
-			playwright.Dispose();
+			var pageObject = new AuthorizationPageObject(_browser);
+			container.RegisterInstanceAs(pageObject);
 		}
 	}
 }

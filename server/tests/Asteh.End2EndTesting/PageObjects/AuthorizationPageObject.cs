@@ -9,7 +9,7 @@ namespace Asteh.End2EndTesting.PageObjects
 			Browser = browser;
 		}
 
-		public string PagePath => "http://localhost:5000/auth";
+		public static string PagePath => "http://localhost:5000/auth";
 		public IBrowser Browser { get; set; } = default!;
 		public IPage Page { get; set; } = default!;
 
