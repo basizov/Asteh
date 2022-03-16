@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -13,7 +14,9 @@ namespace Asteh.Core.Converters
         {
             Debug.Assert(typeToConvert == typeof(DateTime));
             var dateTime = reader.GetString();
-            return dateTime is not null ? DateTime.Parse(dateTime) : DateTime.UtcNow;
+            return dateTime is not null
+                ? DateTime.ParseExact(dateTime, "dd.MM.yyyy", CultureInfo.CurrentCulture)
+                : DateTime.UtcNow;
         }
 
 		public override void Write(

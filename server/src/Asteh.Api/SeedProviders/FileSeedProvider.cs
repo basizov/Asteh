@@ -21,6 +21,10 @@ namespace Asteh.Api.SeedProviders
 			{
 				await dbContext.Database.MigrateAsync();
 			}
+			else
+			{
+				return;
+			}
 
 			if (!(dbContext.UserTypes.Any() || dbContext.Users.Any()))
 			{

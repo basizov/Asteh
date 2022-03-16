@@ -1,6 +1,7 @@
 ﻿using Asteh.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Globalization;
 
 namespace Asteh.Domain.Configuration
 {
@@ -17,8 +18,8 @@ namespace Asteh.Domain.Configuration
 			builder.Property(u => u.LastVisitDate)
 				.IsRequired()
 				.HasConversion(
-					lvd => lvd.ToString("dd.MM.yyyy"),
-					lvdstr => DateTime.Parse(lvdstr))
+					d => d.ToString("dd.MM.yyyy"),
+					d => DateTime.ParseExact(d, "dd.MM.yyyy", CultureInfo.CurrentCulture))
 				.HasMaxLength(10);
 			builder.HasIndex(u => u.Login)
 				.IsUnique()

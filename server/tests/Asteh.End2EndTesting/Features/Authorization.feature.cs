@@ -19,14 +19,12 @@ namespace Asteh.End2EndTesting.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [Xunit.TraitAttribute("Category", "Authorization")]
     public partial class AuthorizationFeature : object, Xunit.IClassFixture<AuthorizationFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-        private static string[] featureTags = new string[] {
-                "Authorization"};
+        private static string[] featureTags = ((string[])(null));
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
@@ -42,7 +40,7 @@ namespace Asteh.End2EndTesting.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Authorization", "![Authorization tests](http://localhost/auth)\r\n\tIn order to check sign in page", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Authorization", null, ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -82,17 +80,15 @@ namespace Asteh.End2EndTesting.Features
             this.TestTearDown();
         }
         
-        [Xunit.SkippableTheoryAttribute(DisplayName="Users could sign in with valid credentials")]
+        [Xunit.SkippableFactAttribute(DisplayName="Users could sign in with valid credentials")]
         [Xunit.TraitAttribute("FeatureTitle", "Authorization")]
         [Xunit.TraitAttribute("Description", "Users could sign in with valid credentials")]
-        [Xunit.InlineDataAttribute("auth", new string[0])]
-        public void UsersCouldSignInWithValidCredentials(string endpoint, string[] exampleTags)
+        public void UsersCouldSignInWithValidCredentials()
         {
-            string[] tagsOfScenario = exampleTags;
+            string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            argumentsOfScenario.Add("endpoint", endpoint);
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Users could sign in with valid credentials", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 6
+#line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -102,13 +98,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 7
+#line 4
  testRunner.Given("logged out user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 8
+#line 5
  testRunner.When("the user attempt to sign in with valid credentials", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 9
+#line 6
  testRunner.Then("successfully signed in", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
